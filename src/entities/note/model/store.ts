@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { db, now } from '@shared/db'
+import { api } from '@shared/api/server'
 import type { Note, NoteColor } from '@shared/types'
 
 interface NoteStore {
@@ -24,21 +25,30 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
 
   add: async (title, body, color, tags) => {
     const ts = now()
-    const id = await db.notes.add({ title, body, color, tags, isPinned: false, createdAt: ts, updatedAt: ts })
+    const uuid = crypto.randomUUID()
+    const id = await db.notes.add({ uuid, title, body, color, tags, isPinned: false, createdAt: ts, updatedAt: ts })
     const note = await db.notes.get(id)
-    if (note) set(s => ({ notes: [note, ...s.notes] }))
+    if (note) {
+      set(s => ({ notes: [note, ...s.notes] }))
+      api.upsert('notes', note).catch(() => {})
+    }
   },
 
   update: async (id, patch) => {
-    await db.notes.update(id, { ...patch, updatedAt: now() })
+    const ts = now()
+    await db.notes.update(id, { ...patch, updatedAt: ts })
     set(s => ({
-      notes: s.notes.map(n => n.id === id ? { ...n, ...patch, updatedAt: now() } : n),
+      notes: s.notes.map(n => n.id === id ? { ...n, ...patch, updatedAt: ts } : n),
     }))
+    const note = get().notes.find(n => n.id === id)
+    if (note?.uuid) api.update('notes', note.uuid, { ...patch, updatedAt: ts }).catch(() => {})
   },
 
   remove: async (id) => {
+    const note = get().notes.find(n => n.id === id)
     await db.notes.delete(id)
     set(s => ({ notes: s.notes.filter(n => n.id !== id) }))
+    if (note?.uuid) api.remove('notes', note.uuid).catch(() => {})
   },
 
   togglePin: async (id) => {

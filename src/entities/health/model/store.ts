@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { db, now, today } from '@shared/db'
+import { api } from '@shared/api/server'
 import type { WeightEntry, MedicationEntry, Medication } from '@shared/types'
 
 interface HealthStore {
@@ -34,28 +35,42 @@ export const useHealthStore = create<HealthStore>((set, get) => ({
 
   addWeight: async (weightKg) => {
     const ts = now()
-    const id = await db.weights.add({ weightKg, date: today(), createdAt: ts, updatedAt: ts })
+    const uuid = crypto.randomUUID()
+    const id = await db.weights.add({ uuid, weightKg, date: today(), createdAt: ts, updatedAt: ts })
     const entry = await db.weights.get(id)
-    if (entry) set(s => ({ weights: [entry, ...s.weights] }))
+    if (entry) {
+      set(s => ({ weights: [entry, ...s.weights] }))
+      api.upsert('weights', entry).catch(() => {})
+    }
   },
 
   logMedication: async (name, dosage) => {
     const ts = now()
-    const id = await db.medicationLogs.add({ name, dosage, takenAt: ts, date: today(), createdAt: ts, updatedAt: ts })
+    const uuid = crypto.randomUUID()
+    const id = await db.medicationLogs.add({ uuid, name, dosage, takenAt: ts, date: today(), createdAt: ts, updatedAt: ts })
     const entry = await db.medicationLogs.get(id)
-    if (entry) set(s => ({ medicationLogs: [entry, ...s.medicationLogs] }))
+    if (entry) {
+      set(s => ({ medicationLogs: [entry, ...s.medicationLogs] }))
+      api.upsert('medication-logs', entry).catch(() => {})
+    }
   },
 
   addMedication: async (name, dosage, scheduledTime) => {
     const ts = now()
-    const id = await db.medications.add({ name, dosage, scheduledTime, isActive: true, createdAt: ts, updatedAt: ts })
+    const uuid = crypto.randomUUID()
+    const id = await db.medications.add({ uuid, name, dosage, scheduledTime, isActive: true, createdAt: ts, updatedAt: ts })
     const med = await db.medications.get(id)
-    if (med) set(s => ({ medications: [...s.medications, med] }))
+    if (med) {
+      set(s => ({ medications: [...s.medications, med] }))
+      api.upsert('medications', med).catch(() => {})
+    }
   },
 
   removeMedication: async (id) => {
+    const med = get().medications.find(m => m.id === id)
     await db.medications.delete(id)
     set(s => ({ medications: s.medications.filter(m => m.id !== id) }))
+    if (med?.uuid) api.remove('medications', med.uuid).catch(() => {})
   },
 
   todayLogs: () => get().medicationLogs.filter(l => l.date === today()),

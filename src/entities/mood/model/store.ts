@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { db, now, today } from '@shared/db'
+import { api } from '@shared/api/server'
 import type { MoodEntry, MoodScore, MoodEmotion } from '@shared/types'
 
 interface MoodStore {
@@ -23,14 +24,20 @@ export const useMoodStore = create<MoodStore>((set, get) => ({
 
   add: async (score, emotions, note) => {
     const ts = now()
-    const id = await db.moods.add({ score, emotions, note, date: today(), createdAt: ts, updatedAt: ts })
+    const uuid = crypto.randomUUID()
+    const id = await db.moods.add({ uuid, score, emotions, note, date: today(), createdAt: ts, updatedAt: ts })
     const entry = await db.moods.get(id)
-    if (entry) set(s => ({ entries: [entry, ...s.entries] }))
+    if (entry) {
+      set(s => ({ entries: [entry, ...s.entries] }))
+      api.upsert('moods', entry).catch(() => {})
+    }
   },
 
   remove: async (id) => {
+    const entry = get().entries.find(e => e.id === id)
     await db.moods.delete(id)
     set(s => ({ entries: s.entries.filter(e => e.id !== id) }))
+    if (entry?.uuid) api.remove('moods', entry.uuid).catch(() => {})
   },
 
   todayEntry: () => get().entries.find(e => e.date === today()),

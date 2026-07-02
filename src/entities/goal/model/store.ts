@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { db, now } from '@shared/db'
+import { api } from '@shared/api/server'
 import type { Goal, GoalCategory, GoalMilestone } from '@shared/types'
 
 interface GoalStore {
@@ -26,18 +27,25 @@ export const useGoalStore = create<GoalStore>((set, get) => ({
 
   add: async (title, description, category, targetDate) => {
     const ts = now()
+    const uuid = crypto.randomUUID()
     const id = await db.goals.add({
-      title, description, category, targetDate,
+      uuid, title, description, category, targetDate,
       progress: 0, isCompleted: false, milestones: [],
       createdAt: ts, updatedAt: ts,
     })
     const goal = await db.goals.get(id)
-    if (goal) set(s => ({ goals: [goal, ...s.goals] }))
+    if (goal) {
+      set(s => ({ goals: [goal, ...s.goals] }))
+      api.upsert('goals', goal).catch(() => {})
+    }
   },
 
   updateProgress: async (id, progress) => {
-    await db.goals.update(id, { progress, updatedAt: now() })
-    set(s => ({ goals: s.goals.map(g => g.id === id ? { ...g, progress } : g) }))
+    const ts = now()
+    await db.goals.update(id, { progress, updatedAt: ts })
+    set(s => ({ goals: s.goals.map(g => g.id === id ? { ...g, progress, updatedAt: ts } : g) }))
+    const goal = get().goals.find(g => g.id === id)
+    if (goal?.uuid) api.update('goals', goal.uuid, { progress, updatedAt: ts }).catch(() => {})
   },
 
   toggleMilestone: async (goalId, milestoneId) => {
@@ -46,25 +54,34 @@ export const useGoalStore = create<GoalStore>((set, get) => ({
     const milestones = goal.milestones.map(m =>
       m.id === milestoneId ? { ...m, isDone: !m.isDone } : m
     )
-    await db.goals.update(goalId, { milestones, updatedAt: now() })
-    set(s => ({ goals: s.goals.map(g => g.id === goalId ? { ...g, milestones } : g) }))
+    const ts = now()
+    await db.goals.update(goalId, { milestones, updatedAt: ts })
+    set(s => ({ goals: s.goals.map(g => g.id === goalId ? { ...g, milestones, updatedAt: ts } : g) }))
+    if (goal.uuid) api.update('goals', goal.uuid, { milestones, updatedAt: ts }).catch(() => {})
   },
 
   addMilestone: async (goalId, milestone) => {
     const goal = get().goals.find(g => g.id === goalId)
     if (!goal) return
     const milestones = [...goal.milestones, milestone]
-    await db.goals.update(goalId, { milestones, updatedAt: now() })
-    set(s => ({ goals: s.goals.map(g => g.id === goalId ? { ...g, milestones } : g) }))
+    const ts = now()
+    await db.goals.update(goalId, { milestones, updatedAt: ts })
+    set(s => ({ goals: s.goals.map(g => g.id === goalId ? { ...g, milestones, updatedAt: ts } : g) }))
+    if (goal.uuid) api.update('goals', goal.uuid, { milestones, updatedAt: ts }).catch(() => {})
   },
 
   complete: async (id) => {
-    await db.goals.update(id, { isCompleted: true, progress: 100, updatedAt: now() })
-    set(s => ({ goals: s.goals.map(g => g.id === id ? { ...g, isCompleted: true, progress: 100 } : g) }))
+    const ts = now()
+    await db.goals.update(id, { isCompleted: true, progress: 100, updatedAt: ts })
+    set(s => ({ goals: s.goals.map(g => g.id === id ? { ...g, isCompleted: true, progress: 100, updatedAt: ts } : g) }))
+    const goal = get().goals.find(g => g.id === id)
+    if (goal?.uuid) api.update('goals', goal.uuid, { isCompleted: true, progress: 100, updatedAt: ts }).catch(() => {})
   },
 
   remove: async (id) => {
+    const goal = get().goals.find(g => g.id === id)
     await db.goals.delete(id)
     set(s => ({ goals: s.goals.filter(g => g.id !== id) }))
+    if (goal?.uuid) api.remove('goals', goal.uuid).catch(() => {})
   },
 }))

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { db, now, today } from '@shared/db'
+import { api } from '@shared/api/server'
 import type { WorkoutSession, WorkoutType } from '@shared/types'
 
 interface WorkoutStore {
@@ -23,14 +24,20 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
 
   add: async (type, durationMin, note) => {
     const ts = now()
-    const id = await db.workouts.add({ type, durationMin, note, date: today(), createdAt: ts, updatedAt: ts })
+    const uuid = crypto.randomUUID()
+    const id = await db.workouts.add({ uuid, type, durationMin, note, date: today(), createdAt: ts, updatedAt: ts })
     const session = await db.workouts.get(id)
-    if (session) set(s => ({ sessions: [session, ...s.sessions] }))
+    if (session) {
+      set(s => ({ sessions: [session, ...s.sessions] }))
+      api.upsert('workouts', session).catch(() => {})
+    }
   },
 
   remove: async (id) => {
+    const session = get().sessions.find(w => w.id === id)
     await db.workouts.delete(id)
     set(s => ({ sessions: s.sessions.filter(w => w.id !== id) }))
+    if (session?.uuid) api.remove('workouts', session.uuid).catch(() => {})
   },
 
   todaySessions: () => get().sessions.filter(w => w.date === today()),

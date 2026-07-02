@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { db, now } from '@shared/db'
+import { api } from '@shared/api/server'
 import type { Task, TaskPriority, TaskStatus } from '@shared/types'
 
 interface TaskStore {
@@ -12,7 +13,7 @@ interface TaskStore {
   remove: (id: number) => Promise<void>
 }
 
-export const useTaskStore = create<TaskStore>((set) => ({
+export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   isLoading: false,
 
@@ -24,26 +25,38 @@ export const useTaskStore = create<TaskStore>((set) => ({
 
   add: async (title, description, priority, dueDate, tags) => {
     const ts = now()
+    const uuid = crypto.randomUUID()
     const id = await db.tasks.add({
-      title, description, priority, dueDate, tags,
+      uuid, title, description, priority, dueDate, tags,
       status: 'todo', createdAt: ts, updatedAt: ts,
     })
     const task = await db.tasks.get(id)
-    if (task) set(s => ({ tasks: [task, ...s.tasks] }))
+    if (task) {
+      set(s => ({ tasks: [task, ...s.tasks] }))
+      api.upsert('tasks', task).catch(() => {})
+    }
   },
 
   updateStatus: async (id, status) => {
-    await db.tasks.update(id, { status, updatedAt: now() })
-    set(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, status } : t) }))
+    const ts = now()
+    await db.tasks.update(id, { status, updatedAt: ts })
+    set(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, status, updatedAt: ts } : t) }))
+    const task = get().tasks.find(t => t.id === id)
+    if (task?.uuid) api.update('tasks', task.uuid, { status, updatedAt: ts }).catch(() => {})
   },
 
   update: async (id, patch) => {
-    await db.tasks.update(id, { ...patch, updatedAt: now() })
-    set(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, ...patch } : t) }))
+    const ts = now()
+    await db.tasks.update(id, { ...patch, updatedAt: ts })
+    set(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, ...patch, updatedAt: ts } : t) }))
+    const task = get().tasks.find(t => t.id === id)
+    if (task?.uuid) api.update('tasks', task.uuid, { ...patch, updatedAt: ts }).catch(() => {})
   },
 
   remove: async (id) => {
+    const task = get().tasks.find(t => t.id === id)
     await db.tasks.delete(id)
     set(s => ({ tasks: s.tasks.filter(t => t.id !== id) }))
+    if (task?.uuid) api.remove('tasks', task.uuid).catch(() => {})
   },
 }))
