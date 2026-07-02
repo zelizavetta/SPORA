@@ -1,0 +1,28 @@
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.emotion {
+  font-size: 0.72rem;
+  padding: 0.1rem 0.45rem;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-dark);
+  border-radius: 100px;
+}
