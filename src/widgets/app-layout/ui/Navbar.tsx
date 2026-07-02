@@ -14,6 +14,7 @@ const NAV = [
 export function Navbar() {
   return (
     <nav className={styles.nav}>
+      <span className={styles.logo}>SPORA</span>
       {NAV.map(item => (
         <NavLink
           key={item.to}

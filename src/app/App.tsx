@@ -8,16 +8,16 @@ import { useGoalStore } from '@entities/goal'
 import { useHealthStore } from '@entities/health'
 
 export function App() {
-  const loadMoods    = useMoodStore(s => s.load)
-  const loadNotes    = useNoteStore(s => s.load)
-  const loadTasks    = useTaskStore(s => s.load)
-  const loadWorkouts = useWorkoutStore(s => s.load)
-  const loadGoals    = useGoalStore(s => s.load)
-  const loadHealth   = useHealthStore(s => s.load)
-
   useEffect(() => {
-    void Promise.all([loadMoods(), loadNotes(), loadTasks(), loadWorkouts(), loadGoals(), loadHealth()])
-  }, [loadMoods, loadNotes, loadTasks, loadWorkouts, loadGoals, loadHealth])
+    void Promise.all([
+      useMoodStore.getState().load(),
+      useNoteStore.getState().load(),
+      useTaskStore.getState().load(),
+      useWorkoutStore.getState().load(),
+      useGoalStore.getState().load(),
+      useHealthStore.getState().load(),
+    ])
+  }, [])
 
   return <AppRouter />
 }

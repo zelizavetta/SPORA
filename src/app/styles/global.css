@@ -86,6 +86,26 @@ h3 { font-size: 0.95rem; font-weight: 600; }
   margin: 0 auto;
 }
 
+@media (min-width: 768px) {
+  :root {
+    --sidebar-width: 220px;
+    --nav-height: 0px;
+  }
+
+  .page {
+    padding: 1.5rem 2rem;
+    max-width: 860px;
+    margin: 0 auto;
+    min-height: unset;
+  }
+
+  .page-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
 .page-header {
   display: flex;
   align-items: center;

@@ -4,11 +4,13 @@ import { Button, Card, Input, Modal } from '@shared/ui'
 import styles from './HealthPage.module.css'
 
 export function HealthPage() {
-  const {
-    medications, medicationLogs, weights,
-    addWeight, logMedication, addMedication, removeMedication,
-    todayLogs, latestWeight,
-  } = useHealthStore()
+  const medications    = useHealthStore(s => s.medications)
+  const weights        = useHealthStore(s => s.weights)
+  const medicationLogs = useHealthStore(s => s.medicationLogs)
+  const addWeight      = useHealthStore(s => s.addWeight)
+  const logMedication  = useHealthStore(s => s.logMedication)
+  const addMedication  = useHealthStore(s => s.addMedication)
+  const removeMedication = useHealthStore(s => s.removeMedication)
 
   const [weightInput, setWeightInput]   = useState('')
   const [medOpen, setMedOpen]           = useState(false)
@@ -17,8 +19,8 @@ export function HealthPage() {
   const [medTime, setMedTime]           = useState('09:00')
   const [saving, setSaving]             = useState(false)
 
-  const todayMedLogs = todayLogs()
-  const latest = latestWeight()
+  const latest = weights[0]
+  const todayMedLogs = medicationLogs.filter(l => l.date === new Date().toISOString().slice(0, 10))
 
   const handleAddWeight = async () => {
     const kg = parseFloat(weightInput.replace(',', '.'))

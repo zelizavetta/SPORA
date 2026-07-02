@@ -2,6 +2,7 @@ import { useMoodStore } from '@entities/mood'
 import { useTaskStore } from '@entities/task'
 import { useWorkoutStore } from '@entities/workout'
 import { useHealthStore } from '@entities/health'
+import { today } from '@shared/db'
 import { Card } from '@shared/ui'
 import { MoodChip } from './MoodChip'
 import styles from './HomePage.module.css'
@@ -17,11 +18,16 @@ const GREETING = (() => {
 const DATE_FMT = new Intl.DateTimeFormat('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })
 
 export function HomePage() {
-  const todayMood    = useMoodStore(s => s.todayEntry())
-  const tasks        = useTaskStore(s => s.tasks)
-  const todayWorkout = useWorkoutStore(s => s.todaySessions())
-  const medications  = useHealthStore(s => s.medications)
-  const todayLogs    = useHealthStore(s => s.todayLogs())
+  const entries        = useMoodStore(s => s.entries)
+  const tasks          = useTaskStore(s => s.tasks)
+  const sessions       = useWorkoutStore(s => s.sessions)
+  const medications    = useHealthStore(s => s.medications)
+  const medicationLogs = useHealthStore(s => s.medicationLogs)
+
+  const t = today()
+  const todayMood    = entries.find(e => e.date === t)
+  const todayWorkout = sessions.filter(w => w.date === t)
+  const todayLogs    = medicationLogs.filter(l => l.date === t)
 
   const doneTasks   = tasks.filter(t => t.status === 'done').length
   const totalTasks  = tasks.filter(t => t.dueDate === new Date().toISOString().slice(0, 10)).length
