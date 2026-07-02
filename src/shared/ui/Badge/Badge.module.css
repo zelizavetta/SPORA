@@ -1,0 +1,14 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.primary { background: var(--color-primary-subtle); color: var(--color-primary-dark); }
+.sage    { background: #d4e8d4; color: #3a6b3a; }
+.peach   { background: #fce4d6; color: #8a4020; }
+.sky     { background: #d6ecf8; color: #1a5c80; }
+.muted   { background: var(--color-bg-muted); color: var(--color-text-muted); }
