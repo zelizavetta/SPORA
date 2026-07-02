@@ -2,6 +2,7 @@ export type ID = number
 
 export interface BaseRecord {
   id?: ID
+  uuid: string
   createdAt: number
   updatedAt: number
 }

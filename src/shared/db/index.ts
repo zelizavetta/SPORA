@@ -26,6 +26,16 @@ class SporaDB extends Dexie {
       medicationLogs: '++id, date, name, takenAt',
       medications: '++id, isActive, name',
     })
+    this.version(2).stores({
+      moods: '++id, uuid, date, score, createdAt',
+      notes: '++id, uuid, isPinned, createdAt, updatedAt, *tags',
+      tasks: '++id, uuid, status, priority, dueDate, createdAt, *tags',
+      workouts: '++id, uuid, type, date, createdAt',
+      goals: '++id, uuid, category, isCompleted, createdAt',
+      weights: '++id, uuid, date, createdAt',
+      medicationLogs: '++id, uuid, date, name, takenAt',
+      medications: '++id, uuid, isActive, name',
+    })
   }
 }
 
