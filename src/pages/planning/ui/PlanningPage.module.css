@@ -1,0 +1,102 @@
+.filters {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.filterBtn {
+  padding: 0.35rem 0.85rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 100px;
+  background: var(--color-surface);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.filterActive {
+  background: var(--color-primary-subtle);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.done { opacity: 0.55; }
+
+.priority {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.taskTitle {
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskDesc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusBadge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+  border-radius: 100px;
+}
+
+.due {
+  font-size: 0.72rem;
+  color: var(--color-text-light);
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+}
+.iconBtn:hover { background: var(--color-bg-muted); }
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.priorityRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.priorityBtn {
+  flex: 1;
+  padding: 0.4rem 0;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+}
+
+.priorityBtnActive { font-weight: 600; }
