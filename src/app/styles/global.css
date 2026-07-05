@@ -1,60 +1,132 @@
-/* ──────────────────────────────────────────
-   Design tokens
-────────────────────────────────────────── */
+/* =========================================================
+   SPORA — design tokens
+   Тёмная тема по умолчанию, акцент: кислотный зелёный
+   Светлая тема: <html data-theme="light">
+   ========================================================= */
+
 :root {
-  /* Primary — мягкий лаванда */
-  --color-primary:        #9b7ecb;
-  --color-primary-dark:   #6b4fa0;
-  --color-primary-subtle: #f0eafa;
+  /* Акцент */
+  --color-primary:        #4ff2a6;
+  --color-primary-dark:   #0d8f5c;
+  --color-primary-subtle: rgba(79, 242, 166, 0.12);
+  --acc: #4ff2a6;
+  --acc-ink: #04241a;
 
-  /* Surfaces */
-  --color-bg:             #faf8ff;
-  --color-bg-muted:       #f2eef9;
-  --color-surface:        #ffffff;
-  --color-surface-2:      #f7f4fc;
+  /* Поверхности (тёмная тема) */
+  --color-bg:        #0e120b;
+  --color-bg-muted:  #151a10;
+  --color-surface:   #191f13;
+  --color-surface-2: #1c2316;
+  --bg:  #0e120b;
+  --bg2: #151a10;
+  --bg3: #1c2316;
+  --card: #191f13;
 
-  /* Text */
-  --color-text:           #2d2540;
-  --color-text-muted:     #7a6f8a;
-  --color-text-light:     #b0a8bf;
+  /* Текст */
+  --color-text:       #e9f1df;
+  --color-text-muted: #8a9379;
+  --color-text-light: #556049;
+  --text:     #e9f1df;
+  --text-dim: #8a9379;
 
-  /* Semantic */
-  --color-danger:         #e07070;
-  --color-success:        #72b784;
-  --color-warning:        #e0a96d;
-  --color-border:         #e4ddf0;
+  /* Семантические */
+  --color-danger:  #ff6b6b;
+  --color-success: #4ff2a6;
+  --color-warning: #ffc93c;
 
-  /* Accent palette (для карточек заметок) */
-  --color-lavender: #e8e0f5;
-  --color-sage:     #d4e8d4;
-  --color-peach:    #fce4d6;
-  --color-sky:      #d6ecf8;
-  --color-vanilla:  #faf3d4;
+  /* Границы и hover */
+  --color-border: rgba(233, 241, 223, 0.11);
+  --border: rgba(233, 241, 223, 0.11);
+  --hover:  rgba(233, 241, 223, 0.06);
 
-  /* Mood colors */
-  --mood-1: #e07070;
-  --mood-2: #e0a96d;
-  --mood-3: #e0d070;
-  --mood-4: #72b784;
-  --mood-5: #9b7ecb;
+  /* Акцентные карточки заметок */
+  --color-lavender: rgba(185, 156, 255, 0.15);
+  --color-sage:     rgba(79, 242, 166, 0.12);
+  --color-peach:    rgba(255, 155, 107, 0.15);
+  --color-sky:      rgba(95, 199, 218, 0.15);
+  --color-vanilla:  rgba(255, 201, 60, 0.13);
 
-  /* Shape */
+  /* Настроения (шкала 1–5) */
+  --mood-1: #ff6b6b;
+  --mood-2: #ff9b6b;
+  --mood-3: #ffc93c;
+  --mood-4: #4ff2a6;
+  --mood-5: #b99cff;
+
+  /* Настроения заметок */
+  --m-joy:  #ffc93c;
+  --m-calm: #5fc7da;
+  --m-idea: #b99cff;
+  --m-anx:  #ff9b6b;
+  --m-sad:  #8fa8d8;
+
+  /* Маскот */
+  --mascot-fill: #eef8db;
+  --mascot-face: #232b1b;
+
+  /* Геометрия */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  /* Shadow */
-  --shadow-sm: 0 1px 4px rgba(80,60,110,0.08);
-  --shadow-md: 0 4px 16px rgba(80,60,110,0.12);
+  /* Тени */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
 
-  /* Nav */
+  /* Навигация */
   --nav-height: 64px;
+
+  /* Шрифты */
+  --font-base: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-/* ──────────────────────────────────────────
-   Reset & base
-────────────────────────────────────────── */
+/* ── Светлая тема ── */
+[data-theme="light"] {
+  --color-primary:        #10b374;
+  --color-primary-dark:   #0a7a50;
+  --color-primary-subtle: rgba(16, 179, 116, 0.1);
+  --acc: #10b374;
+  --acc-ink: #ffffff;
+
+  --color-bg:        #f1f4ea;
+  --color-bg-muted:  #ffffff;
+  --color-surface:   #ffffff;
+  --color-surface-2: #f6f8ef;
+  --bg:  #f1f4ea;
+  --bg2: #ffffff;
+  --bg3: #f6f8ef;
+  --card: #ffffff;
+
+  --color-text:       #1b2113;
+  --color-text-muted: #68715c;
+  --color-text-light: #9aa88e;
+  --text:     #1b2113;
+  --text-dim: #68715c;
+
+  --color-danger:  #d63030;
+  --color-success: #10b374;
+  --color-warning: #c48800;
+
+  --color-border: rgba(27, 33, 19, 0.11);
+  --border: rgba(27, 33, 19, 0.11);
+  --hover:  rgba(27, 33, 19, 0.045);
+
+  --color-lavender: rgba(185, 156, 255, 0.18);
+  --color-sage:     rgba(16, 179, 116, 0.12);
+  --color-peach:    rgba(255, 155, 107, 0.18);
+  --color-sky:      rgba(95, 199, 218, 0.18);
+  --color-vanilla:  rgba(255, 201, 60, 0.16);
+
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  --mascot-fill: #ffffff;
+  --mascot-face: #2a3320;
+}
+
+/* ── Reset & base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, #root {
@@ -63,7 +135,7 @@ html, body, #root {
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-base);
   background: var(--color-bg);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
@@ -76,13 +148,10 @@ h1 { font-size: 1.4rem; font-weight: 700; }
 h2 { font-size: 1.1rem; font-weight: 600; }
 h3 { font-size: 0.95rem; font-weight: 600; }
 
-/* ──────────────────────────────────────────
-   Layout helpers
-────────────────────────────────────────── */
+/* ── Layout helpers ── */
 .page {
   padding: 1rem 1rem calc(var(--nav-height) + 1.5rem);
   min-height: 100dvh;
-  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -94,7 +163,7 @@ h3 { font-size: 0.95rem; font-weight: 600; }
 
   .page {
     padding: 1.5rem 2rem;
-    max-width: 860px;
+    /* max-width: 860px; */
     margin: 0 auto;
     min-height: unset;
   }
@@ -107,10 +176,24 @@ h3 { font-size: 0.95rem; font-weight: 600; }
 }
 
 .page-header {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.25rem;
+  height: 3.5rem;
+}
+.page-header::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 3.5rem;
+  left: -32px;
+  height: 1px;
+  width: 100vw;
+  background: var(--color-border);
+  margin-top: 1.25rem;
 }
 
 .stack { display: flex; flex-direction: column; }
@@ -123,19 +206,54 @@ h3 { font-size: 0.95rem; font-weight: 600; }
 .row-gap-sm { gap: 0.5rem; }
 .row-gap-md { gap: 0.85rem; }
 
-/* ──────────────────────────────────────────
-   Scrollbar
-────────────────────────────────────────── */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
 
-/* ──────────────────────────────────────────
-   Animations
-────────────────────────────────────────── */
+/* ── Animations ── */
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-in { animation: fadeSlideUp 0.25s ease both; }
+
+/* ── JetBrains Mono — навигация, лейблы, теги ── */
+.font-mono { font-family: var(--font-mono); }
+
+[class*="badge"],
+[class*="Badge"],
+[class*="tag"],
+[class*="Tag"] {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+time,
+[class*="date"],
+[class*="Date"],
+[class*="count"],
+[class*="Count"],
+[class*="status"],
+[class*="Status"],
+[class*="meta"],
+[class*="Meta"] {
+  font-family: var(--font-mono);
+}
+
+.dot {
+  width:9px; 
+  height:9px; 
+  border-radius:2px; 
+  border: 1.6px solid var(--color-text-muted);
+  transform: rotate(45deg); 
+  flex: none;
+  background: transparent;
+}
+
+.dot-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
