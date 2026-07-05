@@ -90,6 +90,13 @@ export async function initDb() {
       created_at      BIGINT  NOT NULL,
       updated_at      BIGINT  NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id           SERIAL      PRIMARY KEY,
+      endpoint     TEXT        NOT NULL UNIQUE,
+      subscription JSONB       NOT NULL,
+      created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
   `)
   console.log('DB schema ready')
 }

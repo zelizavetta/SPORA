@@ -8,6 +8,7 @@ import { useGoalStore } from '@entities/goal'
 import { useHealthStore } from '@entities/health'
 import { useAuthStore } from '@entities/auth'
 import { pullServerSync } from '@shared/api/sync'
+import { scheduleNotifications, getNotificationPermission } from '@shared/lib/notifications'
 
 async function loadAll() {
   await Promise.all([
@@ -23,12 +24,18 @@ async function loadAll() {
 export function App() {
   useEffect(() => {
     const isAuth = useAuthStore.getState().isAuthenticated
+    const after = () => {
+      // после загрузки данных — запланировать уведомления если разрешение уже есть
+      if (getNotificationPermission() === 'granted') {
+        scheduleNotifications(useHealthStore.getState().medications)
+      }
+    }
     if (isAuth) {
       pullServerSync()
         .catch(() => {})
-        .finally(() => { void loadAll() })
+        .finally(() => { void loadAll().then(after) })
     } else {
-      void loadAll()
+      void loadAll().then(after)
     }
   }, [])
 

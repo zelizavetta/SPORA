@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useHealthStore } from '@entities/health'
 import { Button, Card, Input, Modal } from '@shared/ui'
+import { subscribeToPush, unsubscribeFromPush, isPushSubscribed } from '@shared/lib/pushSubscription'
 import styles from './HealthPage.module.css'
 
 export function HealthPage() {
@@ -12,25 +13,39 @@ export function HealthPage() {
   const addMedication  = useHealthStore(s => s.addMedication)
   const removeMedication = useHealthStore(s => s.removeMedication)
 
-  const [weightInput, setWeightInput]   = useState('')
-  const [medOpen, setMedOpen]           = useState(false)
-  const [medName, setMedName]           = useState('')
-  const [medDosage, setMedDosage]       = useState('')
-  const [medTime, setMedTime]           = useState('09:00')
-  const [saving, setSaving]             = useState(false)
+  const [weightInput, setWeightInput] = useState('')
+  const [medOpen, setMedOpen]         = useState(false)
+  const [medName, setMedName]         = useState('')
+  const [medDosage, setMedDosage]     = useState('')
+  const [medTime, setMedTime]         = useState('09:00')
+  const [saving, setSaving]           = useState(false)
+  const [pushEnabled, setPushEnabled] = useState(false)
+  const [pushLoading, setPushLoading] = useState(false)
 
   const latest = weights[0]
   const todayMedLogs = medicationLogs.filter(l => l.date === new Date().toISOString().slice(0, 10))
+
+  useEffect(() => {
+    isPushSubscribed().then(setPushEnabled)
+  }, [])
+
+  const handleTogglePush = async () => {
+    setPushLoading(true)
+    if (pushEnabled) {
+      await unsubscribeFromPush()
+      setPushEnabled(false)
+    } else {
+      const ok = await subscribeToPush()
+      setPushEnabled(ok)
+    }
+    setPushLoading(false)
+  }
 
   const handleAddWeight = async () => {
     const kg = parseFloat(weightInput.replace(',', '.'))
     if (isNaN(kg) || kg <= 0) return
     await addWeight(kg)
     setWeightInput('')
-  }
-
-  const handleLog = async (name: string, dosage: string) => {
-    await logMedication(name, dosage)
   }
 
   const handleAddMed = async () => {
@@ -50,12 +65,34 @@ export function HealthPage() {
         <h1>Здоровье</h1>
       </div>
 
-      {/* Медикаменты — критичный раздел */}
+      {/* Медикаменты */}
       <section>
         <div className={styles.sectionHeader}>
           <h2>💊 Таблетки сегодня</h2>
           <Button size="sm" variant="ghost" onClick={() => setMedOpen(true)}>+ Добавить</Button>
         </div>
+
+        {/* Уведомления */}
+        <Card className={styles.notifCard}>
+          <div className="row row-between row-gap-md">
+            <div>
+              <p className={styles.notifTitle}>Фоновые напоминания</p>
+              <p className={styles.notifSub}>
+                {pushEnabled
+                  ? '🔔 уведомления приходят даже когда приложение закрыто'
+                  : 'Включи, чтобы получать напоминания в фоне'}
+              </p>
+            </div>
+            <Button
+              size="sm"
+              variant={pushEnabled ? 'ghost' : 'primary'}
+              onClick={handleTogglePush}
+              disabled={pushLoading}
+            >
+              {pushLoading ? '...' : pushEnabled ? 'Выключить' : 'Включить'}
+            </Button>
+          </div>
+        </Card>
 
         {medications.filter(m => m.isActive).length === 0 ? (
           <Card>
@@ -79,7 +116,7 @@ export function HealthPage() {
                       {taken ? (
                         <span className={styles.takenBadge}>✓ принято</span>
                       ) : (
-                        <Button size="sm" onClick={() => handleLog(med.name, med.dosage)}>
+                        <Button size="sm" onClick={() => logMedication(med.name, med.dosage)}>
                           Принять
                         </Button>
                       )}
@@ -94,7 +131,9 @@ export function HealthPage() {
 
         {todayMedLogs.length > 0 && (
           <p className={styles.logSummary}>
-            Принято сегодня: {todayMedLogs.map(l => `${l.name} в ${new Date(l.takenAt).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })}`).join(', ')}
+            Принято сегодня: {todayMedLogs.map(l =>
+              `${l.name} в ${new Date(l.takenAt).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })}`
+            ).join(', ')}
           </p>
         )}
       </section>
