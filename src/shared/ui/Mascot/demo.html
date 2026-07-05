@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>SPORA mascot — demo</title>
+<script src="spora-mascot.js"></script>
+<style>
+  body { margin:0; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px;
+    background:#0e120b; font-family:system-ui, sans-serif; color:#e9f1df; }
+  .row { display:flex; gap:26px; flex-wrap:wrap; justify-content:center; }
+  .item { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .item span { font-family:monospace; font-size:12px; color:#8a9379; }
+  spora-mascot { --acc:#4ff2a6; }
+</style>
+</head>
+<body>
+  <h2 style="font-family:monospace; letter-spacing:.1em;">SPORA MASCOT — web component</h2>
+  <div class="row">
+    <div class="item"><spora-mascot mood="joy" size="120"></spora-mascot><span>joy</span></div>
+    <div class="item"><spora-mascot mood="calm" size="120"></spora-mascot><span>calm</span></div>
+    <div class="item"><spora-mascot mood="idea" size="120"></spora-mascot><span>idea</span></div>
+    <div class="item"><spora-mascot mood="anxiety" size="120"></spora-mascot><span>anxiety</span></div>
+    <div class="item"><spora-mascot mood="sad" size="120"></spora-mascot><span>sad</span></div>
+  </div>
+  <p style="font-family:monospace; font-size:12px; color:#8a9379;">mascot.setAttribute('mood', 'joy') — меняет мордочку в рантайме</p>
+</body>
+</html>

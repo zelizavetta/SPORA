@@ -1,4 +1,6 @@
 export { Button } from './Button/Button'
+export { Mascot } from './Mascot/Mascot'
+export type { MascotMood } from './Mascot/Mascot'
 export { Card } from './Card/Card'
 export { Input } from './Input/Input'
 export { Textarea } from './Textarea/Textarea'
