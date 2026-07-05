@@ -47,7 +47,7 @@ export function MoodPage() {
   const last7 = entries.slice(0, 7)
 
   return (
-    <div className="page animate-in">
+    <div className="page animate-in stack stack-lg">
       <div className="page-header">
         <h1>Настроение</h1>
         <Button size="sm" onClick={() => setOpen(true)}>+ Отметить</Button>

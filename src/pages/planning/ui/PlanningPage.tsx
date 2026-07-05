@@ -34,8 +34,11 @@ export function PlanningPage() {
   const nextStatus = (s: TaskStatus): TaskStatus =>
     s === 'todo' ? 'in_progress' : s === 'in_progress' ? 'done' : 'todo'
 
+  const prevStatus = (s: TaskStatus): TaskStatus | null =>
+    s === 'in_progress' ? 'todo' : s === 'done' ? 'in_progress' : null
+
   return (
-    <div className="page animate-in">
+    <div className="page animate-in stack stack-lg">
       <div className="page-header">
         <h1>Планы</h1>
         <Button size="sm" onClick={() => setOpen(true)}>+ Задача</Button>
@@ -82,6 +85,12 @@ export function PlanningPage() {
                   onClick={() => updateStatus(task.id!, nextStatus(task.status))}
                   title="Следующий статус"
                 >▶</button>
+                <button
+                  className={styles.iconBtn}
+                  onClick={() => { const p = prevStatus(task.status); if (p) updateStatus(task.id!, p) }}
+                  title="Предыдущий статус"
+                  disabled={task.status === 'todo'}
+                >◀</button>
                 <button className={styles.iconBtn} onClick={() => remove(task.id!)} title="Удалить">🗑</button>
               </div>
             </div>

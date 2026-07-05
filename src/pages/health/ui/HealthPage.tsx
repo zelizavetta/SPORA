@@ -45,7 +45,7 @@ export function HealthPage() {
   const last7weights = weights.slice(0, 7)
 
   return (
-    <div className="page animate-in">
+    <div className="page animate-in stack stack-lg">
       <div className="page-header">
         <h1>Здоровье</h1>
       </div>

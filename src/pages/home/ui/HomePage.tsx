@@ -37,8 +37,8 @@ export function HomePage() {
   )
 
   return (
-    <div className="page animate-in">
-      <div className={styles.greeting}>
+    <div className="page animate-in stack stack-lg">
+      <div className="page-header">
         <p className={styles.greetText}>{GREETING}</p>
         <p className={styles.date}>{DATE_FMT.format(new Date())}</p>
       </div>

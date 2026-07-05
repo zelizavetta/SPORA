@@ -38,7 +38,7 @@ export function WorkoutPage() {
   }, {})
 
   return (
-    <div className="page animate-in">
+    <div className="page animate-in stack stack-lg">
       <div className="page-header">
         <h1>Спорт</h1>
         <Button size="sm" onClick={() => setOpen(true)}>+ Занятие</Button>

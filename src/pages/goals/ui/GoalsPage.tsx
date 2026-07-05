@@ -47,7 +47,7 @@ export function GoalsPage() {
   const completed = goals.filter(g => g.isCompleted)
 
   return (
-    <div className="page animate-in">
+    <div className="page animate-in stack stack-lg">
       <div className="page-header">
         <h1>Цели</h1>
         <Button size="sm" onClick={() => setOpen(true)}>+ Цель</Button>

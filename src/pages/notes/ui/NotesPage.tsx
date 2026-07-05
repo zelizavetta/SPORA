@@ -68,7 +68,7 @@ export function NotesPage() {
   )
 
   return (
-    <div className="page animate-in">
+    <div className="page animate-in stack stack-lg">
       <div className="page-header">
         <h1>Заметки</h1>
         <Button size="sm" onClick={() => setOpen(true)}>+ Новая</Button>
