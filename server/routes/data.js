@@ -201,14 +201,14 @@ router.delete('/weights/:uuid', async (req, res) => {
 
 // ─── Medication logs ──────────────────────────────────────────────────────────
 router.post('/medication-logs', async (req, res) => {
-  const { uuid, name, dosage, takenAt, date, createdAt, updatedAt } = req.body
+  const { uuid, medicationUuid, name, dosage, takenAt, date, createdAt, updatedAt } = req.body
   try {
     const { rows } = await pool.query(
-      `INSERT INTO medication_logs (uuid, name, dosage, taken_at, date, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)
+      `INSERT INTO medication_logs (uuid, medication_uuid, name, dosage, taken_at, date, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
        ON CONFLICT (uuid) DO UPDATE SET updated_at=EXCLUDED.updated_at
        RETURNING *`,
-      [uuid, name, dosage ?? '', takenAt, date, createdAt, updatedAt]
+      [uuid, medicationUuid ?? '', name, dosage ?? '', takenAt, date, createdAt, updatedAt]
     )
     res.json(mapMedLog(rows[0]))
   } catch (e) { res.status(500).json({ error: e.message }) }

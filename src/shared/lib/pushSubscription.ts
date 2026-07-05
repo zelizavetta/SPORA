@@ -40,7 +40,10 @@ export async function subscribeToPush(): Promise<boolean> {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('spora_token') ?? ''}`,
       },
-      body: JSON.stringify(sub),
+      body: JSON.stringify({
+        ...sub.toJSON(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      }),
     })
     return true
   } catch (e) {

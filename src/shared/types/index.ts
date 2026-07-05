@@ -80,6 +80,7 @@ export interface WeightEntry extends BaseRecord {
 }
 
 export interface MedicationEntry extends BaseRecord {
+  medicationUuid: string
   name: string
   dosage: string
   takenAt: number // timestamp

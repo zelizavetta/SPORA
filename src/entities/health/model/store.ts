@@ -10,7 +10,7 @@ interface HealthStore {
   isLoading: boolean
   load: () => Promise<void>
   addWeight: (weightKg: number) => Promise<void>
-  logMedication: (name: string, dosage: string) => Promise<void>
+  logMedication: (medicationUuid: string, name: string, dosage: string) => Promise<void>
   addMedication: (name: string, dosage: string, scheduledTime: string) => Promise<void>
   removeMedication: (id: number) => Promise<void>
   todayLogs: () => MedicationEntry[]
@@ -44,10 +44,10 @@ export const useHealthStore = create<HealthStore>((set, get) => ({
     }
   },
 
-  logMedication: async (name, dosage) => {
+  logMedication: async (medicationUuid, name, dosage) => {
     const ts = now()
     const uuid = crypto.randomUUID()
-    const id = await db.medicationLogs.add({ uuid, name, dosage, takenAt: ts, date: today(), createdAt: ts, updatedAt: ts })
+    const id = await db.medicationLogs.add({ uuid, medicationUuid, name, dosage, takenAt: ts, date: today(), createdAt: ts, updatedAt: ts })
     const entry = await db.medicationLogs.get(id)
     if (entry) {
       set(s => ({ medicationLogs: [entry, ...s.medicationLogs] }))

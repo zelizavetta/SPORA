@@ -18,6 +18,13 @@
   font-size: 1.2rem;
 }
 
+.testStatus {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+}
+
 .sectionHeader {
   display: flex;
   align-items: center;

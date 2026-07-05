@@ -36,9 +36,12 @@ class SporaDB extends Dexie {
       medicationLogs: '++id, uuid, date, name, takenAt',
       medications: '++id, uuid, isActive, name',
     })
-    // v3: добавляем createdAt в индекс medicationLogs (нужно для orderBy)
     this.version(3).stores({
       medicationLogs: '++id, uuid, date, name, takenAt, createdAt',
+    })
+    // v4: добавляем medicationUuid для точного определения факта приёма
+    this.version(4).stores({
+      medicationLogs: '++id, uuid, medicationUuid, date, name, takenAt, createdAt',
     })
   }
 }

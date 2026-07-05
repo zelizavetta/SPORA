@@ -7,8 +7,7 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY,
 )
 
-export async function sendPushToAll(payload) {
-  const { rows } = await pool.query('SELECT id, subscription FROM push_subscriptions')
+async function sendToRows(rows, payload) {
   for (const row of rows) {
     try {
       await webpush.sendNotification(row.subscription, JSON.stringify(payload))
@@ -18,4 +17,13 @@ export async function sendPushToAll(payload) {
       }
     }
   }
+}
+
+export async function sendPushToAll(payload) {
+  const { rows } = await pool.query('SELECT id, subscription FROM push_subscriptions')
+  await sendToRows(rows, payload)
+}
+
+export async function sendPushToSubscribers(rows, payload) {
+  await sendToRows(rows, payload)
 }

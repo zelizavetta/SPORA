@@ -21,6 +21,7 @@ export function HealthPage() {
   const [saving, setSaving]           = useState(false)
   const [pushEnabled, setPushEnabled] = useState(false)
   const [pushLoading, setPushLoading] = useState(false)
+  const [testStatus, setTestStatus]   = useState<string | null>(null)
 
   const latest = weights[0]
   const todayMedLogs = medicationLogs.filter(l => l.date === new Date().toISOString().slice(0, 10))
@@ -28,6 +29,22 @@ export function HealthPage() {
   useEffect(() => {
     isPushSubscribed().then(setPushEnabled)
   }, [])
+
+  const handleTestPush = async () => {
+    setTestStatus('отправляю...')
+    try {
+      const res = await fetch('/api/push/test', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('spora_token') ?? ''}` },
+      })
+      const data = await res.json()
+      if (data.ok) setTestStatus(`✓ отправлено (${data.subscribers} подписчик)`)
+      else setTestStatus(`✗ ${data.error}`)
+    } catch {
+      setTestStatus('✗ ошибка соединения с сервером')
+    }
+    setTimeout(() => setTestStatus(null), 5000)
+  }
 
   const handleTogglePush = async () => {
     setPushLoading(true)
@@ -79,18 +96,26 @@ export function HealthPage() {
               <p className={styles.notifTitle}>Фоновые напоминания</p>
               <p className={styles.notifSub}>
                 {pushEnabled
-                  ? '🔔 уведомления приходят даже когда приложение закрыто'
+                  ? 'уведомления приходят даже когда приложение закрыто'
                   : 'Включи, чтобы получать напоминания в фоне'}
               </p>
+              {testStatus && <p className={styles.testStatus}>{testStatus}</p>}
             </div>
-            <Button
-              size="sm"
-              variant={pushEnabled ? 'ghost' : 'primary'}
-              onClick={handleTogglePush}
-              disabled={pushLoading}
-            >
-              {pushLoading ? '...' : pushEnabled ? 'Выключить' : 'Включить'}
-            </Button>
+            <div className="stack stack-sm" style={{ alignItems: 'flex-end' }}>
+              <Button
+                size="sm"
+                variant={pushEnabled ? 'ghost' : 'primary'}
+                onClick={handleTogglePush}
+                disabled={pushLoading}
+              >
+                {pushLoading ? '...' : pushEnabled ? 'Выключить' : 'Включить'}
+              </Button>
+              {pushEnabled && (
+                <Button size="sm" variant="ghost" onClick={handleTestPush}>
+                  Тест
+                </Button>
+              )}
+            </div>
           </div>
         </Card>
 
@@ -104,7 +129,7 @@ export function HealthPage() {
         ) : (
           <div className="stack stack-sm">
             {medications.filter(m => m.isActive).map(med => {
-              const taken = todayMedLogs.some(l => l.name === med.name)
+              const taken = todayMedLogs.some(l => l.medicationUuid === med.uuid)
               return (
                 <Card key={med.id} className={taken ? styles.taken : styles.pending}>
                   <div className="row row-between row-gap-md">
@@ -116,7 +141,7 @@ export function HealthPage() {
                       {taken ? (
                         <span className={styles.takenBadge}>✓ принято</span>
                       ) : (
-                        <Button size="sm" onClick={() => logMedication(med.name, med.dosage)}>
+                        <Button size="sm" onClick={() => logMedication(med.uuid, med.name, med.dosage)}>
                           Принять
                         </Button>
                       )}

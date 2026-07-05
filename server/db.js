@@ -72,13 +72,14 @@ export async function initDb() {
     );
 
     CREATE TABLE IF NOT EXISTS medication_logs (
-      uuid        TEXT    PRIMARY KEY,
-      name        TEXT    NOT NULL,
-      dosage      TEXT    NOT NULL DEFAULT '',
-      taken_at    BIGINT  NOT NULL,
-      date        TEXT    NOT NULL,
-      created_at  BIGINT  NOT NULL,
-      updated_at  BIGINT  NOT NULL
+      uuid             TEXT    PRIMARY KEY,
+      medication_uuid  TEXT    NOT NULL DEFAULT '',
+      name             TEXT    NOT NULL,
+      dosage           TEXT    NOT NULL DEFAULT '',
+      taken_at         BIGINT  NOT NULL,
+      date             TEXT    NOT NULL,
+      created_at       BIGINT  NOT NULL,
+      updated_at       BIGINT  NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS medications (
@@ -95,8 +96,15 @@ export async function initDb() {
       id           SERIAL      PRIMARY KEY,
       endpoint     TEXT        NOT NULL UNIQUE,
       subscription JSONB       NOT NULL,
+      timezone     TEXT        NOT NULL DEFAULT 'UTC',
       created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+  `)
+  await pool.query(`
+    ALTER TABLE medication_logs
+      ADD COLUMN IF NOT EXISTS medication_uuid TEXT NOT NULL DEFAULT '';
+    ALTER TABLE push_subscriptions
+      ADD COLUMN IF NOT EXISTS timezone TEXT NOT NULL DEFAULT 'UTC';
   `)
   console.log('DB schema ready')
 }
@@ -143,7 +151,7 @@ export const mapWeight = r => ({
 })
 
 export const mapMedLog = r => ({
-  uuid: r.uuid, name: r.name, dosage: r.dosage,
+  uuid: r.uuid, medicationUuid: r.medication_uuid ?? '', name: r.name, dosage: r.dosage,
   takenAt: n(r.taken_at), date: r.date,
   createdAt: n(r.created_at), updatedAt: n(r.updated_at),
 })
