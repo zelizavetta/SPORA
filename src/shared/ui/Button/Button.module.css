@@ -17,7 +17,7 @@
 
 .primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--acc-ink);
 }
 .primary:hover:not(:disabled) { opacity: 0.88; }
 

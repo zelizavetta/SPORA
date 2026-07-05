@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './Modal.module.css'
 
 interface ModalProps {
@@ -18,7 +19,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
   if (!isOpen) return null
 
-  return (
+  return createPortal(
     <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal>
       <div className={styles.panel} onClick={e => e.stopPropagation()}>
         {title && (
@@ -29,6 +30,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         )}
         <div className={styles.body}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
