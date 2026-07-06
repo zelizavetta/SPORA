@@ -78,6 +78,70 @@
   font-style: italic;
 }
 
+/* Medication form */
+.fieldLabel {
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.timeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timeInput {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-mono);
+  outline: none;
+}
+.timeInput:focus { border-color: var(--color-primary); }
+
+.daysRow {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.dayChip {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dayChip:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.dayActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--acc-ink, #04241a);
+  font-weight: 600;
+}
+
+.everyDayBtn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
 /* Weight */
 .weightCard {
   margin-bottom: 0.75rem;

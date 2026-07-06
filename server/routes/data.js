@@ -216,16 +216,17 @@ router.post('/medication-logs', async (req, res) => {
 
 // ─── Medications ──────────────────────────────────────────────────────────────
 router.post('/medications', async (req, res) => {
-  const { uuid, name, dosage, scheduledTime, isActive, createdAt, updatedAt } = req.body
+  const { uuid, name, dosage, scheduledTimes, daysOfWeek, isActive, createdAt, updatedAt } = req.body
   try {
     const { rows } = await pool.query(
-      `INSERT INTO medications (uuid, name, dosage, scheduled_time, is_active, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)
+      `INSERT INTO medications (uuid, name, dosage, scheduled_times, days_of_week, is_active, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
        ON CONFLICT (uuid) DO UPDATE SET
-         name=EXCLUDED.name, dosage=EXCLUDED.dosage, scheduled_time=EXCLUDED.scheduled_time,
+         name=EXCLUDED.name, dosage=EXCLUDED.dosage,
+         scheduled_times=EXCLUDED.scheduled_times, days_of_week=EXCLUDED.days_of_week,
          is_active=EXCLUDED.is_active, updated_at=EXCLUDED.updated_at
        RETURNING *`,
-      [uuid, name, dosage ?? '', scheduledTime ?? '09:00', isActive !== false, createdAt, updatedAt]
+      [uuid, name, dosage ?? '', JSON.stringify(scheduledTimes ?? ['09:00']), JSON.stringify(daysOfWeek ?? []), isActive !== false, createdAt, updatedAt]
     )
     res.json(mapMed(rows[0]))
   } catch (e) { res.status(500).json({ error: e.message }) }

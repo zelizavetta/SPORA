@@ -90,6 +90,7 @@ export interface MedicationEntry extends BaseRecord {
 export interface Medication extends BaseRecord {
   name: string
   dosage: string
-  scheduledTime: string // HH:MM
+  scheduledTimes: string[] // HH:MM[]
+  daysOfWeek: number[]     // 0=Вс 1=Пн 2=Вт 3=Ср 4=Чт 5=Пт 6=Сб; [] = каждый день
   isActive: boolean
 }

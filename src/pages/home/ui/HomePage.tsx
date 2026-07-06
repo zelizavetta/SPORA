@@ -94,7 +94,7 @@ export function HomePage() {
               <div>
                 <h3>Не забудь про таблетки!</h3>
                 <p className={styles.medList}>
-                  {pendingMeds.map(m => `${m.name} (${m.scheduledTime})`).join(' · ')}
+                  {pendingMeds.map(m => `${m.name} (${(m.scheduledTimes ?? []).join(', ')})`).join(' · ')}
                 </p>
               </div>
               <a href="/health" className={styles.link}>→</a>

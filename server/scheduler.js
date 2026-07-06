@@ -1,6 +1,16 @@
 import { pool } from './db.js'
 import { sendPushToSubscribers } from './push.js'
 
+function getDayOfWeekInTz(tz) {
+  try {
+    const parts = new Intl.DateTimeFormat('en', { weekday: 'short', timeZone: tz }).formatToParts(new Date())
+    const name = parts.find(p => p.type === 'weekday')?.value
+    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(name ?? 'Sun')
+  } catch {
+    return new Date().getDay()
+  }
+}
+
 function hhmmInTz(tz) {
   try {
     return new Intl.DateTimeFormat('en', {
@@ -36,10 +46,18 @@ export function startScheduler() {
         const dedupKey = `${timezone}:${hhmm}`
         if (sent.has(dedupKey)) continue
 
-        const { rows: meds } = await pool.query(
-          'SELECT * FROM medications WHERE is_active = true AND scheduled_time = $1',
-          [hhmm],
+        const dayOfWeek = getDayOfWeekInTz(timezone)
+
+        const { rows: allMeds } = await pool.query(
+          'SELECT * FROM medications WHERE is_active = true',
         )
+        const meds = allMeds.filter(med => {
+          const times = med.scheduled_times ?? [med.scheduled_time]
+          const days  = med.days_of_week ?? []
+          const timeMatch = times.includes(hhmm)
+          const dayMatch  = days.length === 0 || days.includes(dayOfWeek)
+          return timeMatch && dayMatch
+        })
         if (meds.length === 0) continue
 
         sent.add(dedupKey)

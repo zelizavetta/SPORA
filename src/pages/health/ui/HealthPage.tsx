@@ -4,6 +4,15 @@ import { Button, Card, Input, Modal } from '@shared/ui'
 import { subscribeToPush, unsubscribeFromPush, isPushSubscribed } from '@shared/lib/pushSubscription'
 import styles from './HealthPage.module.css'
 
+const DAY_LABELS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6]
+
+function formatSchedule(times: string[], days: number[]): string {
+  const t = times.join(', ')
+  if (days.length === 0 || days.length === 7) return t
+  return `${t} · ${days.map(d => DAY_LABELS[d]).join(' ')}`
+}
+
 export function HealthPage() {
   const medications    = useHealthStore(s => s.medications)
   const weights        = useHealthStore(s => s.weights)
@@ -17,7 +26,8 @@ export function HealthPage() {
   const [medOpen, setMedOpen]         = useState(false)
   const [medName, setMedName]         = useState('')
   const [medDosage, setMedDosage]     = useState('')
-  const [medTime, setMedTime]         = useState('09:00')
+  const [medTimes, setMedTimes]       = useState<string[]>(['09:00'])
+  const [medDays, setMedDays]         = useState<number[]>([])
   const [saving, setSaving]           = useState(false)
   const [pushEnabled, setPushEnabled] = useState(false)
   const [pushLoading, setPushLoading] = useState(false)
@@ -66,12 +76,23 @@ export function HealthPage() {
   }
 
   const handleAddMed = async () => {
-    if (!medName.trim()) return
+    const validTimes = medTimes.filter(t => t.trim())
+    if (!medName.trim() || validTimes.length === 0) return
     setSaving(true)
-    await addMedication(medName.trim(), medDosage.trim(), medTime)
+    await addMedication(medName.trim(), medDosage.trim(), validTimes, medDays)
     setSaving(false)
     setMedOpen(false)
-    setMedName(''); setMedDosage(''); setMedTime('09:00')
+    setMedName(''); setMedDosage(''); setMedTimes(['09:00']); setMedDays([])
+  }
+
+  const toggleDay = (day: number) => {
+    setMedDays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
+    )
+  }
+
+  const toggleAllDays = () => {
+    setMedDays(prev => prev.length === 7 ? [] : [...ALL_DAYS])
   }
 
   const last7weights = weights.slice(0, 7)
@@ -110,11 +131,11 @@ export function HealthPage() {
               >
                 {pushLoading ? '...' : pushEnabled ? 'Выключить' : 'Включить'}
               </Button>
-              {pushEnabled && (
+              {/* {pushEnabled && (
                 <Button size="sm" variant="ghost" onClick={handleTestPush}>
                   Тест
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
         </Card>
@@ -130,12 +151,17 @@ export function HealthPage() {
           <div className="stack stack-sm">
             {medications.filter(m => m.isActive).map(med => {
               const taken = todayMedLogs.some(l => l.medicationUuid === med.uuid)
+              const times = med.scheduledTimes ?? []
+              const days  = med.daysOfWeek ?? []
               return (
                 <Card key={med.id} className={taken ? styles.taken : styles.pending}>
                   <div className="row row-between row-gap-md">
                     <div>
                       <p className={styles.medName}>{med.name}</p>
-                      <p className={styles.medInfo}>{med.dosage} · {med.scheduledTime}</p>
+                      <p className={styles.medInfo}>
+                        {med.dosage && <>{med.dosage} · </>}
+                        {formatSchedule(times, days)}
+                      </p>
                     </div>
                     <div className="row row-gap-sm">
                       {taken ? (
@@ -212,7 +238,52 @@ export function HealthPage() {
         <div className="stack stack-md">
           <Input label="Название" value={medName} onChange={e => setMedName(e.target.value)} placeholder="Например, рисперидон" />
           <Input label="Дозировка" value={medDosage} onChange={e => setMedDosage(e.target.value)} placeholder="2 мг" />
-          <Input label="Время приёма" type="time" value={medTime} onChange={e => setMedTime(e.target.value)} />
+
+          {/* Времена приёма */}
+          <div>
+            <p className={styles.fieldLabel}>Время приёма</p>
+            <div className="stack stack-sm">
+              {medTimes.map((t, i) => (
+                <div key={i} className={styles.timeRow}>
+                  <input
+                    type="time"
+                    value={t}
+                    onChange={e => setMedTimes(prev => prev.map((v, j) => j === i ? e.target.value : v))}
+                    className={styles.timeInput}
+                  />
+                  {medTimes.length > 1 && (
+                    <button
+                      className={styles.iconBtn}
+                      onClick={() => setMedTimes(prev => prev.filter((_, j) => j !== i))}
+                    >✕</button>
+                  )}
+                </div>
+              ))}
+              <Button size="sm" variant="ghost" onClick={() => setMedTimes(prev => [...prev, '09:00'])}>
+                + добавить время
+              </Button>
+            </div>
+          </div>
+
+          {/* Дни недели */}
+          <div>
+            <p className={styles.fieldLabel}>Дни приёма</p>
+            <div className={styles.daysRow}>
+              {ALL_DAYS.map(d => (
+                <button
+                  key={d}
+                  className={`${styles.dayChip} ${(medDays.length === 0 || medDays.includes(d)) ? styles.dayActive : ''}`}
+                  onClick={() => toggleDay(d)}
+                >
+                  {DAY_LABELS[d]}
+                </button>
+              ))}
+            </div>
+            <button className={styles.everyDayBtn} onClick={toggleAllDays}>
+              {medDays.length === 0 || medDays.length === 7 ? '✓ каждый день' : 'выбрать все'}
+            </button>
+          </div>
+
           <Button onClick={handleAddMed} disabled={saving || !medName.trim()}>
             {saving ? 'Сохраняю...' : 'Добавить'}
           </Button>

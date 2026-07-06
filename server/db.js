@@ -83,13 +83,14 @@ export async function initDb() {
     );
 
     CREATE TABLE IF NOT EXISTS medications (
-      uuid            TEXT    PRIMARY KEY,
-      name            TEXT    NOT NULL,
-      dosage          TEXT    NOT NULL DEFAULT '',
-      scheduled_time  TEXT    NOT NULL DEFAULT '09:00',
-      is_active       BOOLEAN NOT NULL DEFAULT TRUE,
-      created_at      BIGINT  NOT NULL,
-      updated_at      BIGINT  NOT NULL
+      uuid             TEXT    PRIMARY KEY,
+      name             TEXT    NOT NULL,
+      dosage           TEXT    NOT NULL DEFAULT '',
+      scheduled_times  JSONB   NOT NULL DEFAULT '["09:00"]',
+      days_of_week     JSONB   NOT NULL DEFAULT '[]',
+      is_active        BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at       BIGINT  NOT NULL,
+      updated_at       BIGINT  NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS push_subscriptions (
@@ -105,6 +106,10 @@ export async function initDb() {
       ADD COLUMN IF NOT EXISTS medication_uuid TEXT NOT NULL DEFAULT '';
     ALTER TABLE push_subscriptions
       ADD COLUMN IF NOT EXISTS timezone TEXT NOT NULL DEFAULT 'UTC';
+    ALTER TABLE medications
+      ADD COLUMN IF NOT EXISTS scheduled_times JSONB NOT NULL DEFAULT '["09:00"]';
+    ALTER TABLE medications
+      ADD COLUMN IF NOT EXISTS days_of_week JSONB NOT NULL DEFAULT '[]';
   `)
   console.log('DB schema ready')
 }
@@ -158,6 +163,8 @@ export const mapMedLog = r => ({
 
 export const mapMed = r => ({
   uuid: r.uuid, name: r.name, dosage: r.dosage,
-  scheduledTime: r.scheduled_time, isActive: r.is_active,
+  scheduledTimes: r.scheduled_times ?? [r.scheduled_time ?? '09:00'],
+  daysOfWeek: r.days_of_week ?? [],
+  isActive: r.is_active,
   createdAt: n(r.created_at), updatedAt: n(r.updated_at),
 })

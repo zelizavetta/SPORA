@@ -43,6 +43,20 @@ class SporaDB extends Dexie {
     this.version(4).stores({
       medicationLogs: '++id, uuid, medicationUuid, date, name, takenAt, createdAt',
     })
+    // v5: scheduledTime → scheduledTimes[], + daysOfWeek[]
+    this.version(5).stores({
+      medications: '++id, uuid, isActive, name',
+    }).upgrade(tx => {
+      return tx.table('medications').toCollection().modify((med: any) => {
+        if (!med.scheduledTimes) {
+          med.scheduledTimes = [med.scheduledTime ?? '09:00']
+        }
+        if (!med.daysOfWeek) {
+          med.daysOfWeek = []
+        }
+        delete med.scheduledTime
+      })
+    })
   }
 }
 

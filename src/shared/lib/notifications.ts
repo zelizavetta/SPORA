@@ -21,17 +21,18 @@ export function scheduleNotifications(medications: Medication[]) {
 
   const active = medications.filter(m => m.isActive)
   for (const med of active) {
-    _scheduleOne(med, medications)
+    for (const t of (med.scheduledTimes ?? [])) {
+      _scheduleOne(med, t)
+    }
   }
 }
 
-function _scheduleOne(med: Medication, allMeds: Medication[]) {
-  const [h, m] = med.scheduledTime.split(':').map(Number)
+function _scheduleOne(med: Medication, timeStr: string) {
+  const [h, m] = timeStr.split(':').map(Number)
   const now = new Date()
   const target = new Date()
   target.setHours(h, m, 0, 0)
 
-  // если время уже прошло сегодня — перенести на завтра
   if (target.getTime() <= now.getTime()) {
     target.setDate(target.getDate() + 1)
   }
@@ -42,11 +43,10 @@ function _scheduleOne(med: Medication, allMeds: Medication[]) {
     new Notification(`Время принять ${med.name}`, {
       body: med.dosage ? `Дозировка: ${med.dosage}` : 'SPORA напоминает о таблетке',
       icon: '/icons/icon-192.png',
-      tag: `med-${med.uuid ?? med.name}`,
+      tag: `med-${med.uuid ?? med.name}-${timeStr}`,
       requireInteraction: true,
     })
-    // перепланировать на следующий день
-    _scheduleOne(med, allMeds)
+    _scheduleOne(med, timeStr)
   }, delay)
 
   _timers.push(id)
