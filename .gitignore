@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Build
+dist/
+.vite/
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Database
+server/spora.db
+server/spora.db-shm
+server/spora.db-wal
+
+# PostgreSQL backups (keep SQL migrations trackable)
+*.dump
+*.backup
+/backups/
+/server/backups/
+
+# Logs
+*.log
+*.log.*
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+node_modules/.tmp/
+
+# Vitest
+coverage/
+.nyc_output/
+.vitest/

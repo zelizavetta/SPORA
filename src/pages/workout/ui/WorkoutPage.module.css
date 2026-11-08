@@ -1,0 +1,101 @@
+.statsCard { margin-bottom: 0.5rem; }
+
+.statRow {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.statLabel {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.dateLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.typeIcon { font-size: 1.4rem; }
+
+.typeName {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.duration {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.noteText {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: 0.15rem;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.2rem;
+  opacity: 0.6;
+}
+.iconBtn:hover { opacity: 1; }
+
+/* Form */
+.formLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.typeBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.6rem 0.25rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+}
+
+.typeBtn > span:first-child { font-size: 1.3rem; }
+
+.typeBtnActive {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}

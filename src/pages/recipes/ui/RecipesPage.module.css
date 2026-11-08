@@ -1,0 +1,725 @@
+/* ── Вкладки ─────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-md);
+  padding: 0.25rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: calc(var(--radius-md) - 2px);
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.tab:hover { color: var(--color-text); }
+
+.tabActive {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* ── Панель фильтров ─────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--color-primary); }
+
+.chipActive {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.sortRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.select {
+  flex: 1;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.88rem;
+}
+
+/* ── Карточка рецепта ────────────────────────────────────── */
+.recipeCard { cursor: default; }
+
+.recipeHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+}
+
+.typeEmoji { font-size: 1.3rem; flex-shrink: 0; }
+
+.recipeHeadText { flex: 1; min-width: 0; }
+
+.recipeTitle {
+  font-weight: 600;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipeMeta {
+  font-size: 0.73rem;
+  color: var(--color-text-muted);
+}
+
+.chevron {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Полоска наличия продуктов ───────────────────────────── */
+.availRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.availBar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-bg-muted);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.availFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.availLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+/* ── Ингредиенты в карточке ──────────────────────────────── */
+.ingList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.ingChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  background: var(--color-bg-muted);
+  font-size: 0.76rem;
+  color: var(--color-text);
+}
+
+.ingChipMissing {
+  border-color: var(--color-danger, #f87171);
+  background: color-mix(in srgb, var(--color-danger, #f87171) 12%, transparent);
+}
+
+.ingAmount {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+
+/* Цветной восклицательный знак у отсутствующих продуктов */
+.warnMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-danger, #f87171);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.expanded {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.recipeDesc {
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.6rem;
+  white-space: pre-wrap;
+}
+
+.missingLine {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-danger, #f87171);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Холодильник ─────────────────────────────────────────── */
+.fridgeToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.fridgeCount {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.groupCard { cursor: default; }
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.groupEmoji { font-size: 1rem; }
+
+.groupCount {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.productList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.productRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+}
+
+.productOut { opacity: 0.5; }
+
+.productName {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.productName:hover { color: var(--color-primary); }
+
+.qtyControls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.qtyBtn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.qtyBtn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.qtyBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.qtyValue {
+  min-width: 4.2rem;
+  text-align: center;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.deleteBtn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.12s;
+}
+.deleteBtn:hover { color: var(--color-danger, #f87171); }
+
+/* ── Неделя: навигация ───────────────────────────────────── */
+.weekNav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weekArrow {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s;
+}
+.weekArrow:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.weekRangeWrap {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.weekRange {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.weekToday {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+.weekToday:hover { color: var(--color-primary); }
+
+/* ── Неделя: день ────────────────────────────────────────── */
+.dayCard { cursor: default; }
+
+.dayCardToday {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.dayHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dayName {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.dayDate {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.dayAdd {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s;
+}
+.dayAdd:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.dayEmpty {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.dayList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dayItem {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0;
+}
+
+.dayItemEmoji { font-size: 0.95rem; flex-shrink: 0; }
+
+.dayItemTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.84rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayItemMissing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-danger, #f87171);
+  flex-shrink: 0;
+}
+
+/* ── Неделя: список продуктов ────────────────────────────── */
+.shoppingCard { cursor: default; }
+
+.shoppingHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shoppingTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.shoppingToggle {
+  margin-left: auto;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.shoppingToggle:hover { color: var(--color-primary); }
+
+.shoppingDone {
+  font-size: 0.82rem;
+  color: var(--color-primary);
+}
+
+.shoppingList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.shoppingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.32rem 0;
+}
+
+.shoppingHave { opacity: 0.5; }
+
+.okMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-bg, #0e120b);
+  font-size: 0.6rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.shoppingText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.shoppingName {
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shoppingAmount {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.shoppingFor {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.shoppingFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.shoppingSummary {
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+/* ── Неделя: выбор рецепта ───────────────────────────────── */
+.pickerList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 45vh;
+  overflow-y: auto;
+}
+
+.pickerItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.pickerItem:hover { border-color: var(--color-primary); }
+
+.pickerTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pickerAvail {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Формы ───────────────────────────────────────────────── */
+.formLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.typeBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.55rem 0.25rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.typeBtn > span:first-child { font-size: 1.15rem; }
+
+.typeBtnActive {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.qtyFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+/* ── Редактор ингредиентов ───────────────────────────────── */
+.ingEditList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.ingEditRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-md);
+}
+
+.ingEditName {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.83rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ingEditAmount {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.ingEditRemove {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ingEditRemove:hover { color: var(--color-danger, #f87171); }
+
+.ingEditInputs {
+  display: grid;
+  grid-template-columns: 1fr 6rem auto;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 480px) {
+  .typeGrid { grid-template-columns: repeat(2, 1fr); }
+  .ingEditInputs { grid-template-columns: 1fr 5rem auto; }
+}

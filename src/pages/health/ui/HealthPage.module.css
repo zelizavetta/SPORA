@@ -1,0 +1,212 @@
+.notifCard {
+  margin-bottom: 0.75rem;
+  border-left: 3px solid var(--color-primary);
+}
+
+.notifTitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.notifSub {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
+
+.notifOn {
+  font-size: 1.2rem;
+}
+
+.testStatus {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  margin-bottom: 0.75rem;
+}
+
+.empty {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.pending { border-left: 3px solid var(--color-warning); }
+.taken   { border-left: 3px solid var(--color-success); opacity: 0.8; }
+
+.medName {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.medInfo {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+.takenBadge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  padding: 0.2rem;
+}
+.iconBtn:hover { color: var(--color-danger); }
+
+.logSummary {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Medication form */
+.fieldLabel {
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.timeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timeInput {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-mono);
+  outline: none;
+}
+.timeInput:focus { border-color: var(--color-primary); }
+
+.daysRow {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.dayChip {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dayChip:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.dayActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--acc-ink, #04241a);
+  font-weight: 600;
+}
+
+.everyDayBtn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Weight */
+.weightCard {
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.weightValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.weightDate {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+
+.weightChart {
+  margin-bottom: 0.75rem;
+}
+
+.chartLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.weightBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  height: 80px;
+}
+
+.weightBar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.wBar {
+  width: 100%;
+  background: var(--color-primary);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  opacity: 0.7;
+}
+
+.wLabel {
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+}
+
+.wDate {
+  font-size: 0.55rem;
+  color: var(--color-text-light);
+}
+
+.weightInput {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}

@@ -1,0 +1,72 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.map {
+  height: 520px;
+  border-radius: var(--radius-lg, 14px);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  z-index: 0;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 5rem 1rem;
+  text-align: center;
+}
+.emptyIcon   { font-size: 2.5rem; }
+.emptyTitle  { font-size: 1rem; font-weight: 600; color: var(--color-text); margin: 0; }
+.emptyHint   { font-size: 0.85rem; color: var(--color-text-muted); max-width: 280px; margin: 0; }
+
+/* ── Legend ──────────────────────────────────────────────── */
+.legend {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 14px);
+  padding: 1rem 1.25rem;
+}
+
+.legendLabel {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem;
+}
+
+.legendItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--color-bg-muted, rgba(255,255,255,0.04));
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  padding: 0.25rem 0.7rem 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: border-color 0.12s;
+}
+.legendItem:hover { border-color: var(--color-primary); }
+
+.legendDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legendTitle { color: var(--color-text); font-weight: 500; }
+.legendLoc { color: var(--color-text-muted); font-size: 0.72rem; }
+
+@media (max-width: 640px) {
+  .map { height: 360px; }
+}

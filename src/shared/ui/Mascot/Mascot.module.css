@@ -1,0 +1,182 @@
+:root {
+  --mascot-acc: #4ff2a6;
+  --mascot-fill: #f3fbe4;
+  --mascot-face: #26301c;
+}
+
+@keyframes sporaBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-0.45em) rotate(-3deg); }
+}
+@keyframes sporaBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96%           { transform: scaleY(0.1); }
+}
+@keyframes sporaSpark {
+  0%, 100% { opacity: .4; transform: scale(.75) rotate(0deg); }
+  50%       { opacity: 1;  transform: scale(1.15) rotate(45deg); }
+}
+@keyframes sporaDrop {
+  0%, 100% { transform: translateY(0); opacity: .9; }
+  50%       { transform: translateY(0.25em); opacity: 1; }
+}
+
+.wrap {
+  position: relative;
+  width: 8em;
+  height: 7.2em;
+  display: inline-block;
+  line-height: 0;
+}
+
+.anim {
+  position: absolute;
+  inset: 0;
+  animation: sporaBob 3.4s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0.3em 0.4em rgba(0,0,0,.25))
+    drop-shadow(0 0 0.22em var(--mascot-acc))
+    drop-shadow(0 0 0.02em var(--mascot-acc));
+}
+.anim.still { animation: none; }
+
+/* bow */
+.bowL {
+  position: absolute; left: 2.78em; top: -0.42em;
+  width: 0.98em; height: 0.82em;
+  border-radius: 60% 30% 60% 30%;
+  background: var(--mascot-acc);
+  transform: rotate(-12deg);
+}
+.bowR {
+  position: absolute; left: 4.25em; top: -0.42em;
+  width: 0.98em; height: 0.82em;
+  border-radius: 30% 60% 30% 60%;
+  background: var(--mascot-acc);
+  transform: rotate(12deg);
+}
+.bowC {
+  position: absolute; left: 3.72em; top: -0.2em;
+  width: 0.54em; height: 0.54em;
+  border-radius: 50%;
+  background: var(--mascot-acc);
+}
+
+/* body */
+.body {
+  position: absolute; left: 1em; top: 0.7em;
+  width: 6em; height: 6em;
+  clip-path: polygon(
+    50% 0%, 60.6% 10.4%, 75% 6.7%, 79% 21%, 93.3% 25%,
+    89.6% 39.4%, 100% 50%, 89.6% 60.6%, 93.3% 75%, 79% 79%,
+    75% 93.3%, 60.6% 89.6%, 50% 100%, 39.4% 89.6%, 25% 93.3%,
+    21% 79%, 6.7% 75%, 10.4% 60.6%, 0% 50%, 10.4% 39.4%,
+    6.7% 25%, 21% 21%, 25% 6.7%, 39.4% 10.4%
+  );
+  background:
+    radial-gradient(rgba(74,102,44,0.13) 0.05em, transparent 0.06em) 0 0 / 0.52em 0.52em,
+    repeating-linear-gradient(52deg, rgba(74,102,44,0.16) 0 0.018em, transparent 0.018em 0.62em),
+    repeating-linear-gradient(-8deg, rgba(74,102,44,0.13) 0 0.018em, transparent 0.018em 0.7em),
+    repeating-linear-gradient(-64deg, rgba(74,102,44,0.11) 0 0.016em, transparent 0.016em 0.66em),
+    radial-gradient(circle at 40% 34%, #ffffff, var(--mascot-fill) 58%, color-mix(in oklab, var(--mascot-fill) 78%, #5f8a35) 100%);
+}
+
+/* eyes */
+.eyeArc {
+  position: absolute;
+  width: 0.92em; height: 0.5em;
+  border-top: 0.18em solid var(--mascot-face);
+  border-radius: 0.9em 0.9em 0 0;
+}
+.eyeArcL { left: 2.92em; top: 3.2em; }
+.eyeArcR { left: 4.32em; top: 3.2em; }
+
+.eyeDot {
+  position: absolute;
+  width: 0.64em; height: 0.8em;
+  border-radius: 50%;
+  background: var(--mascot-face);
+  animation: sporaBlink 5.5s ease-in-out infinite;
+  transform-origin: center;
+}
+.eyeDotL { left: 3.05em; top: 3.08em; }
+.eyeDotR { left: 4.4em;  top: 3.08em; }
+
+.eyeGlint {
+  position: absolute;
+  width: 0.19em; height: 0.19em;
+  border-radius: 50%;
+  background: #fff;
+  opacity: .85;
+}
+.eyeGlintL { left: 3.23em; top: 3.2em; }
+.eyeGlintR { left: 4.58em; top: 3.2em; }
+
+/* blush */
+.blush {
+  position: absolute;
+  width: 0.8em; height: 0.5em;
+  border-radius: 50%;
+  opacity: .55;
+}
+.blushL { left: 2.5em;  top: 3.72em; }
+.blushR { left: 4.72em; top: 3.72em; }
+
+/* mouths */
+.mouthBig {
+  position: absolute; left: 3.38em; top: 3.82em;
+  width: 1.24em; height: 0.74em;
+  border: 0.17em solid var(--mascot-face);
+  border-top: none;
+  border-radius: 0 0 1.3em 1.3em;
+}
+.mouthSmall {
+  position: absolute; left: 3.58em; top: 3.92em;
+  width: 0.86em; height: 0.44em;
+  border: 0.15em solid var(--mascot-face);
+  border-top: none;
+  border-radius: 0 0 0.9em 0.9em;
+}
+.mouthFrown {
+  position: absolute; left: 3.58em; top: 4.18em;
+  width: 0.86em; height: 0.44em;
+  border: 0.15em solid var(--mascot-face);
+  border-bottom: none;
+  border-radius: 0.9em 0.9em 0 0;
+}
+.mouthO {
+  position: absolute; left: 3.74em; top: 3.88em;
+  width: 0.54em; height: 0.6em;
+  border: 0.15em solid var(--mascot-face);
+  border-radius: 50%;
+}
+.mouthWavyL {
+  position: absolute; left: 3.52em; top: 4.0em;
+  width: 0.5em; height: 0.34em;
+  border-bottom: 0.15em solid var(--mascot-face);
+  border-radius: 0 0 0.5em 0.5em;
+}
+.mouthWavyR {
+  position: absolute; left: 3.97em; top: 3.93em;
+  width: 0.5em; height: 0.34em;
+  border-top: 0.15em solid var(--mascot-face);
+  border-radius: 0.5em 0.5em 0 0;
+}
+
+/* mood fx */
+.ideaSpark {
+  position: absolute; left: 5.5em; top: 1.4em;
+  width: 0.55em; height: 0.55em;
+  background: var(--mascot-acc);
+  border-radius: 0.1em;
+  transform: rotate(45deg);
+  animation: sporaSpark 1.8s ease-in-out infinite;
+}
+.anxDrop {
+  position: absolute; left: 5.6em; top: 2.5em;
+  width: 0.5em; height: 0.66em;
+  background: #7fc9df;
+  border-radius: 0 50% 50% 50%;
+  transform: rotate(45deg);
+  animation: sporaDrop 1.6s ease-in-out infinite;
+}
