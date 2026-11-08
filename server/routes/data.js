@@ -1,38 +1,60 @@
 import { Router } from 'express'
 import {
-  pool,
+  pool, ensureDb,
   mapMood, mapNote, mapTask, mapWorkout,
   mapGoal, mapWeight, mapMedLog, mapMed,
+  mapRecipe, mapFridgeItem, mapMealPlan,
 } from '../db.js'
 
 const router = Router()
 
-// ─── Full sync pull ──────────────────────────────────────────────────────────
-router.get('/sync', async (_req, res) => {
+// Схема могла не создаться на старте (БД была недоступна) — гарантируем её
+// перед любой работой с данными. Повторный вызов бесплатный.
+router.use(async (_req, res, next) => {
   try {
-    const [moods, notes, tasks, workouts, goals, weights, medLogs, meds] = await Promise.all([
-      pool.query('SELECT * FROM moods ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM notes ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM tasks ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM workouts ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM goals ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM weights ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM medication_logs ORDER BY created_at DESC'),
-      pool.query('SELECT * FROM medications ORDER BY name ASC'),
-    ])
-    res.json({
-      moods:          moods.rows.map(mapMood),
-      notes:          notes.rows.map(mapNote),
-      tasks:          tasks.rows.map(mapTask),
-      workouts:       workouts.rows.map(mapWorkout),
-      goals:          goals.rows.map(mapGoal),
-      weights:        weights.rows.map(mapWeight),
-      medicationLogs: medLogs.rows.map(mapMedLog),
-      medications:    meds.rows.map(mapMed),
-    })
+    await ensureDb()
+    next()
   } catch (e) {
-    res.status(500).json({ error: e.message })
+    res.status(503).json({ error: `DB unavailable: ${e.message}` })
   }
+})
+
+// ─── Full sync pull ──────────────────────────────────────────────────────────
+/**
+ * Таблицы тянем по отдельности: если одна сломана или ещё не создана,
+ * клиент всё равно получает остальные, а не пустой ответ с 500.
+ */
+async function pullTable(sql, mapper) {
+  try {
+    const { rows } = await pool.query(sql)
+    return rows.map(mapper)
+  } catch (e) {
+    console.warn(`sync: ${sql} — ${e.message}`)
+    return []
+  }
+}
+
+router.get('/sync', async (_req, res) => {
+  const [moods, notes, tasks, workouts, goals, weights, medLogs, meds, recipes, fridge, mealPlan] = await Promise.all([
+    pullTable('SELECT * FROM moods ORDER BY created_at DESC', mapMood),
+    pullTable('SELECT * FROM notes ORDER BY created_at DESC', mapNote),
+    pullTable('SELECT * FROM tasks ORDER BY created_at DESC', mapTask),
+    pullTable('SELECT * FROM workouts ORDER BY created_at DESC', mapWorkout),
+    pullTable('SELECT * FROM goals ORDER BY created_at DESC', mapGoal),
+    pullTable('SELECT * FROM weights ORDER BY created_at DESC', mapWeight),
+    pullTable('SELECT * FROM medication_logs ORDER BY created_at DESC', mapMedLog),
+    pullTable('SELECT * FROM medications ORDER BY name ASC', mapMed),
+    pullTable('SELECT * FROM recipes ORDER BY created_at DESC', mapRecipe),
+    pullTable('SELECT * FROM fridge ORDER BY name ASC', mapFridgeItem),
+    pullTable('SELECT * FROM meal_plan ORDER BY date ASC', mapMealPlan),
+  ])
+
+  res.json({
+    moods, notes, tasks, workouts, goals, weights,
+    medicationLogs: medLogs,
+    medications: meds,
+    recipes, fridge, mealPlan,
+  })
 })
 
 // ─── Moods ──────────────────────────────────────────────────────────────────
@@ -59,27 +81,32 @@ router.delete('/moods/:uuid', async (req, res) => {
 
 // ─── Notes ──────────────────────────────────────────────────────────────────
 router.post('/notes', async (req, res) => {
-  const { uuid, title, body, color, tags, isPinned, createdAt, updatedAt } = req.body
+  const { uuid, title, body, color, tags, isPinned, linkedNoteUuids, linkedTaskUuids, location, cluster, createdAt, updatedAt } = req.body
   try {
     const { rows } = await pool.query(
-      `INSERT INTO notes (uuid, title, body, color, tags, is_pinned, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+      `INSERT INTO notes (uuid, title, body, color, tags, is_pinned, linked_note_uuids, linked_task_uuids, location, cluster, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        ON CONFLICT (uuid) DO UPDATE SET
          title=EXCLUDED.title, body=EXCLUDED.body, color=EXCLUDED.color,
-         tags=EXCLUDED.tags, is_pinned=EXCLUDED.is_pinned, updated_at=EXCLUDED.updated_at
+         tags=EXCLUDED.tags, is_pinned=EXCLUDED.is_pinned,
+         linked_note_uuids=EXCLUDED.linked_note_uuids,
+         linked_task_uuids=EXCLUDED.linked_task_uuids,
+         location=EXCLUDED.location,
+         cluster=EXCLUDED.cluster,
+         updated_at=EXCLUDED.updated_at
        RETURNING *`,
-      [uuid, title, body ?? '', color ?? 'lavender', JSON.stringify(tags ?? []), isPinned ?? false, createdAt, updatedAt]
+      [uuid, title, body ?? '', color ?? 'lavender', JSON.stringify(tags ?? []), isPinned ?? false, JSON.stringify(linkedNoteUuids ?? []), JSON.stringify(linkedTaskUuids ?? []), location ? JSON.stringify(location) : null, cluster ?? null, createdAt, updatedAt]
     )
     res.json(mapNote(rows[0]))
   } catch (e) { res.status(500).json({ error: e.message }) }
 })
 
 router.put('/notes/:uuid', async (req, res) => {
-  const { title, body, color, tags, isPinned, updatedAt } = req.body
+  const { title, body, color, tags, isPinned, linkedNoteUuids, linkedTaskUuids, location, cluster, updatedAt } = req.body
   try {
     const { rows } = await pool.query(
-      `UPDATE notes SET title=$1,body=$2,color=$3,tags=$4,is_pinned=$5,updated_at=$6 WHERE uuid=$7 RETURNING *`,
-      [title, body ?? '', color, JSON.stringify(tags ?? []), isPinned ?? false, updatedAt, req.params.uuid]
+      `UPDATE notes SET title=$1,body=$2,color=$3,tags=$4,is_pinned=$5,linked_note_uuids=$6,linked_task_uuids=$7,location=$8,cluster=$9,updated_at=$10 WHERE uuid=$11 RETURNING *`,
+      [title, body ?? '', color, JSON.stringify(tags ?? []), isPinned ?? false, JSON.stringify(linkedNoteUuids ?? []), JSON.stringify(linkedTaskUuids ?? []), location ? JSON.stringify(location) : null, cluster ?? null, updatedAt, req.params.uuid]
     )
     res.json(mapNote(rows[0]))
   } catch (e) { res.status(500).json({ error: e.message }) }
@@ -92,27 +119,30 @@ router.delete('/notes/:uuid', async (req, res) => {
 
 // ─── Tasks ──────────────────────────────────────────────────────────────────
 router.post('/tasks', async (req, res) => {
-  const { uuid, title, description, priority, status, dueDate, tags, createdAt, updatedAt } = req.body
+  const { uuid, title, description, priority, status, dueDate, tags, dependsOnUuids, linkedNoteUuids, createdAt, updatedAt } = req.body
   try {
     const { rows } = await pool.query(
-      `INSERT INTO tasks (uuid, title, description, priority, status, due_date, tags, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+      `INSERT INTO tasks (uuid, title, description, priority, status, due_date, tags, depends_on_uuids, linked_note_uuids, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
        ON CONFLICT (uuid) DO UPDATE SET
          title=EXCLUDED.title, description=EXCLUDED.description, priority=EXCLUDED.priority,
-         status=EXCLUDED.status, due_date=EXCLUDED.due_date, tags=EXCLUDED.tags, updated_at=EXCLUDED.updated_at
+         status=EXCLUDED.status, due_date=EXCLUDED.due_date, tags=EXCLUDED.tags,
+         depends_on_uuids=EXCLUDED.depends_on_uuids,
+         linked_note_uuids=EXCLUDED.linked_note_uuids,
+         updated_at=EXCLUDED.updated_at
        RETURNING *`,
-      [uuid, title, description ?? '', priority ?? 'medium', status ?? 'todo', dueDate ?? null, JSON.stringify(tags ?? []), createdAt, updatedAt]
+      [uuid, title, description ?? '', priority ?? 'medium', status ?? 'todo', dueDate ?? null, JSON.stringify(tags ?? []), JSON.stringify(dependsOnUuids ?? []), JSON.stringify(linkedNoteUuids ?? []), createdAt, updatedAt]
     )
     res.json(mapTask(rows[0]))
   } catch (e) { res.status(500).json({ error: e.message }) }
 })
 
 router.put('/tasks/:uuid', async (req, res) => {
-  const { title, description, priority, status, dueDate, tags, updatedAt } = req.body
+  const { title, description, priority, status, dueDate, tags, dependsOnUuids, linkedNoteUuids, updatedAt } = req.body
   try {
     const { rows } = await pool.query(
-      `UPDATE tasks SET title=$1,description=$2,priority=$3,status=$4,due_date=$5,tags=$6,updated_at=$7 WHERE uuid=$8 RETURNING *`,
-      [title, description ?? '', priority, status, dueDate ?? null, JSON.stringify(tags ?? []), updatedAt, req.params.uuid]
+      `UPDATE tasks SET title=$1,description=$2,priority=$3,status=$4,due_date=$5,tags=$6,depends_on_uuids=$7,linked_note_uuids=$8,updated_at=$9 WHERE uuid=$10 RETURNING *`,
+      [title, description ?? '', priority, status, dueDate ?? null, JSON.stringify(tags ?? []), JSON.stringify(dependsOnUuids ?? []), JSON.stringify(linkedNoteUuids ?? []), updatedAt, req.params.uuid]
     )
     res.json(mapTask(rows[0]))
   } catch (e) { res.status(500).json({ error: e.message }) }
@@ -234,6 +264,98 @@ router.post('/medications', async (req, res) => {
 
 router.delete('/medications/:uuid', async (req, res) => {
   await pool.query('DELETE FROM medications WHERE uuid=$1', [req.params.uuid])
+  res.json({ ok: true })
+})
+
+// ─── Recipes ─────────────────────────────────────────────────────────────────
+router.post('/recipes', async (req, res) => {
+  const { uuid, title, description, type, ingredients, createdAt, updatedAt } = req.body
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO recipes (uuid, title, description, type, ingredients, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT (uuid) DO UPDATE SET
+         title=EXCLUDED.title, description=EXCLUDED.description, type=EXCLUDED.type,
+         ingredients=EXCLUDED.ingredients, updated_at=EXCLUDED.updated_at
+       RETURNING *`,
+      [uuid, title, description ?? '', type ?? 'other', JSON.stringify(ingredients ?? []), createdAt, updatedAt]
+    )
+    res.json(mapRecipe(rows[0]))
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.put('/recipes/:uuid', async (req, res) => {
+  const { title, description, type, ingredients, updatedAt } = req.body
+  try {
+    const { rows } = await pool.query(
+      `UPDATE recipes SET title=COALESCE($1,title), description=COALESCE($2,description),
+         type=COALESCE($3,type), ingredients=COALESCE($4,ingredients), updated_at=$5
+       WHERE uuid=$6 RETURNING *`,
+      [title ?? null, description ?? null, type ?? null,
+       ingredients ? JSON.stringify(ingredients) : null, updatedAt, req.params.uuid]
+    )
+    res.json(mapRecipe(rows[0]))
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.delete('/recipes/:uuid', async (req, res) => {
+  await pool.query('DELETE FROM recipes WHERE uuid=$1', [req.params.uuid])
+  res.json({ ok: true })
+})
+
+// ─── Fridge ──────────────────────────────────────────────────────────────────
+router.post('/fridge', async (req, res) => {
+  const { uuid, name, category, quantity, unit, createdAt, updatedAt } = req.body
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO fridge (uuid, name, category, quantity, unit, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT (uuid) DO UPDATE SET
+         name=EXCLUDED.name, category=EXCLUDED.category,
+         quantity=EXCLUDED.quantity, unit=EXCLUDED.unit, updated_at=EXCLUDED.updated_at
+       RETURNING *`,
+      [uuid, name, category ?? 'other', quantity ?? 0, unit ?? 'шт', createdAt, updatedAt]
+    )
+    res.json(mapFridgeItem(rows[0]))
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.put('/fridge/:uuid', async (req, res) => {
+  const { name, category, quantity, unit, updatedAt } = req.body
+  try {
+    const { rows } = await pool.query(
+      `UPDATE fridge SET name=COALESCE($1,name), category=COALESCE($2,category),
+         quantity=COALESCE($3,quantity), unit=COALESCE($4,unit), updated_at=$5
+       WHERE uuid=$6 RETURNING *`,
+      [name ?? null, category ?? null, quantity ?? null, unit ?? null, updatedAt, req.params.uuid]
+    )
+    res.json(mapFridgeItem(rows[0]))
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.delete('/fridge/:uuid', async (req, res) => {
+  await pool.query('DELETE FROM fridge WHERE uuid=$1', [req.params.uuid])
+  res.json({ ok: true })
+})
+
+// ─── Meal plan ───────────────────────────────────────────────────────────────
+router.post('/meal-plan', async (req, res) => {
+  const { uuid, date, recipeUuid, createdAt, updatedAt } = req.body
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO meal_plan (uuid, date, recipe_uuid, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (uuid) DO UPDATE SET
+         date=EXCLUDED.date, recipe_uuid=EXCLUDED.recipe_uuid, updated_at=EXCLUDED.updated_at
+       RETURNING *`,
+      [uuid, date, recipeUuid, createdAt, updatedAt]
+    )
+    res.json(mapMealPlan(rows[0]))
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.delete('/meal-plan/:uuid', async (req, res) => {
+  await pool.query('DELETE FROM meal_plan WHERE uuid=$1', [req.params.uuid])
   res.json({ ok: true })
 })
 

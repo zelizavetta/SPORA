@@ -8,6 +8,16 @@ declare const self: ServiceWorkerGlobalScope & { __WB_MANIFEST: { url: string; r
 precacheAndRoute(self.__WB_MANIFEST)
 cleanupOutdatedCaches()
 
+// registerType: 'autoUpdate' сам по себе новый SW не активирует — без этого
+// он висит в waiting, пока не закрыты все вкладки, и приложение (особенно
+// установленный PWA на телефоне) продолжает жить на старом бандле.
+self.addEventListener('install', () => {
+  void self.skipWaiting()
+})
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim())
+})
+
 // Gemini API — NetworkFirst
 registerRoute(
   ({ url }) => url.hostname === 'generativelanguage.googleapis.com',

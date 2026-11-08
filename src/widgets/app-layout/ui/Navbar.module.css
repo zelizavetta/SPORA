@@ -50,6 +50,25 @@
   padding: 0 2px;
 }
 
+/* ── Logout button ─── */
+.logoutBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.15s;
+  padding: 0.25rem 0;
+  font-family: inherit;
+}
+.logoutBtn:hover { color: var(--color-danger, #f87171); }
+.logoutIcon { font-size: 1.1rem; line-height: 1; }
+
 /* ── Desktop: left sidebar ── */
 @media (min-width: 768px) {
   .nav {
@@ -82,7 +101,7 @@
     letter-spacing: 0.08em;
   }
 
-  .item {
+  .item, .logoutBtn {
     flex: unset;
     flex-direction: row;
     align-items: center;
@@ -92,6 +111,9 @@
     border-radius: var(--radius-md);
     margin: 0 0.5rem;
   }
+
+  .logoutBtn { margin-top: auto; margin-bottom: 0.75rem; width: calc(100% - 1rem); }
+  .logoutIcon { font-size: 1rem; }
 
   .item:hover {
     background: var(--color-bg-muted);

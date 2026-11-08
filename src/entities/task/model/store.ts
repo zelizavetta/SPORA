@@ -28,7 +28,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const uuid = crypto.randomUUID()
     const id = await db.tasks.add({
       uuid, title, description, priority, dueDate, tags,
-      status: 'todo', createdAt: ts, updatedAt: ts,
+      dependsOnUuids: [], linkedNoteUuids: [], status: 'todo', createdAt: ts, updatedAt: ts,
     })
     const task = await db.tasks.get(id)
     if (task) {

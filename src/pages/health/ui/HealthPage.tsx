@@ -31,7 +31,7 @@ export function HealthPage() {
   const [saving, setSaving]           = useState(false)
   const [pushEnabled, setPushEnabled] = useState(false)
   const [pushLoading, setPushLoading] = useState(false)
-  const [testStatus, setTestStatus]   = useState<string | null>(null)
+  const [testStatus] = useState<string | null>(null)
 
   const latest = weights[0]
   const todayMedLogs = medicationLogs.filter(l => l.date === new Date().toISOString().slice(0, 10))
@@ -39,22 +39,6 @@ export function HealthPage() {
   useEffect(() => {
     isPushSubscribed().then(setPushEnabled)
   }, [])
-
-  const handleTestPush = async () => {
-    setTestStatus('отправляю...')
-    try {
-      const res = await fetch('/api/push/test', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('spora_token') ?? ''}` },
-      })
-      const data = await res.json()
-      if (data.ok) setTestStatus(`✓ отправлено (${data.subscribers} подписчик)`)
-      else setTestStatus(`✗ ${data.error}`)
-    } catch {
-      setTestStatus('✗ ошибка соединения с сервером')
-    }
-    setTimeout(() => setTestStatus(null), 5000)
-  }
 
   const handleTogglePush = async () => {
     setPushLoading(true)

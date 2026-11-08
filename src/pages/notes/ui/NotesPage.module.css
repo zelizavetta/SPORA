@@ -53,6 +53,21 @@
   color: var(--color-text-muted);
 }
 
+.locationBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  padding: 0.1rem 0.45rem;
+  margin-top: 0.3rem;
+  opacity: 0.75;
+}
+
 /* Color picker */
 .colorPicker {
   display: flex;
@@ -71,3 +86,555 @@
 
 .colorBtn:active { transform: scale(0.95); }
 .colorBtnActive { border-color: var(--color-primary); }
+
+/* Edit hint on card */
+.editHint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.noteCard:hover .editHint { opacity: 1; }
+.noteCard { cursor: pointer; }
+
+/* ── Edit modal ────────────────────────────────────────── */
+.editModal { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.editTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.editTitle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  padding: 0.25rem 0;
+  outline: none;
+  font-family: var(--font-base);
+}
+.editTitle:focus { border-color: var(--color-primary); }
+
+.editBody {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  padding: 0.6rem 0.75rem;
+  resize: vertical;
+  outline: none;
+  font-family: var(--font-base);
+  line-height: 1.55;
+  min-height: 120px;
+}
+.editBody:focus { border-color: var(--color-primary); }
+
+/* ── Linked notes ──────────────────────────────────────── */
+.linksSection {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.linksLabel {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.linkedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.linkedChip {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.35rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 100px;
+  background: var(--color-surface);
+  font-size: 0.78rem;
+}
+
+.linkedDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.linkedTitle { color: var(--color-text); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.linkedRemove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  margin-left: 0.1rem;
+}
+.linkedRemove:hover { color: var(--color-danger); }
+
+.linkSearchWrap { position: relative; }
+
+.linkDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  z-index: 50;
+  box-shadow: var(--shadow-lg);
+}
+
+.linkOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+.linkOption:hover { background: var(--color-bg-muted); }
+
+.linkOptionTitle {
+  font-size: 0.85rem;
+  color: var(--color-text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkOptionTags {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.linkEmpty {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  padding: 0.5rem 0;
+}
+
+/* Linked preview on card */
+.linkedPreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.linkedPreviewChip {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  background: rgba(0,0,0,0.06);
+  padding: 0.1rem 0.45rem;
+  border-radius: 100px;
+}
+
+/* ── Type badges ─────────────────────────────────────────── */
+.typeBadge { font-size: 0.8rem; flex-shrink: 0; }
+.taskTypeBadge {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+/* ── Task card ───────────────────────────────────────────── */
+.taskCard { cursor: pointer; transition: box-shadow 0.15s; }
+.taskCard:hover { box-shadow: var(--shadow-md); }
+.done { opacity: 0.55; }
+.blocked { border-left: 3px solid var(--color-warning) !important; }
+
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+}
+.taskTitle {
+  font-weight: 600; font-size: 0.9rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.taskDesc {
+  font-size: 0.8rem; color: var(--color-text-muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.statusBadge {
+  font-size: 0.7rem; padding: 0.1rem 0.45rem;
+  background: var(--color-bg-muted); color: var(--color-text-muted);
+  border-radius: 100px;
+}
+.due { font-size: 0.72rem; color: var(--color-text-light); }
+.blockedBadge {
+  font-size: 0.7rem; color: var(--color-warning);
+  font-family: var(--font-mono);
+}
+
+/* ── Filters ─────────────────────────────────────────────── */
+.filters {
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+  padding-bottom: 0.25rem;
+}
+.filterBtn {
+  padding: 0.35rem 0.85rem;
+  border: 1.5px solid var(--color-border); border-radius: 100px;
+  background: var(--color-surface); font-size: 0.8rem;
+  color: var(--color-text-muted); cursor: pointer; white-space: nowrap;
+  transition: all 0.15s;
+}
+.filterActive {
+  background: var(--color-primary-subtle); border-color: var(--color-primary);
+  color: var(--color-primary-dark); font-weight: 600;
+}
+.filterSep { color: var(--color-border); line-height: 2; }
+
+/* ── Form fields ─────────────────────────────────────────── */
+.fieldLabel {
+  font-size: 0.8rem; font-family: var(--font-mono);
+  color: var(--color-text-muted); margin-bottom: 0.4rem;
+}
+.priorityRow { display: flex; gap: 0.5rem; }
+.priorityBtn {
+  flex: 1; padding: 0.4rem 0;
+  border: 1.5px solid var(--color-border); border-radius: var(--radius-md);
+  background: var(--color-surface); font-size: 0.82rem;
+  cursor: pointer; color: var(--color-text-muted); transition: all 0.15s;
+}
+.priorityBtnActive { font-weight: 600; }
+
+/* ── View toggle ─────────────────────────────────────────── */
+.viewToggle {
+  display: flex; border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.viewBtn {
+  padding: 0.3rem 0.65rem; background: transparent; border: none;
+  color: var(--color-text-muted); cursor: pointer; font-size: 1rem;
+  line-height: 1; transition: background 0.12s, color 0.12s;
+}
+.viewBtn:hover { background: var(--color-bg-muted); color: var(--color-text); }
+.viewBtnActive { background: var(--color-primary); color: var(--acc-ink, #04241a); }
+
+/* ── Calendar ────────────────────────────────────────────── */
+.calNav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.calNavBtn {
+  background: none; border: 1.5px solid var(--color-border); border-radius: var(--radius-md);
+  color: var(--color-text); cursor: pointer; font-size: 1.2rem; line-height: 1;
+  padding: 0.2rem 0.6rem; transition: background 0.12s;
+}
+.calNavBtn:hover { background: var(--color-bg-muted); }
+.calMonth { font-weight: 600; font-size: 1rem; font-family: var(--font-mono); }
+.calGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.calDayName { text-align: center; font-size: 0.7rem; font-family: var(--font-mono); color: var(--color-text-muted); padding: 0.25rem 0; }
+.calCell {
+  min-height: 66px; padding: 0.3rem 0.25rem 0.3rem;
+  border-radius: var(--radius-sm); cursor: pointer;
+  background: var(--color-surface); display: flex; flex-direction: column; gap: 0.15rem;
+  transition: background 0.1s;
+  overflow: hidden;
+}
+.calCell:hover { background: var(--color-bg-muted); }
+.calCellOther { background: transparent; opacity: 0.35; }
+.calCellToday .calDayNum {
+  background: var(--color-primary); color: var(--acc-ink, #04241a);
+  border-radius: 50%; width: 1.4rem; height: 1.4rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.calCellSelected { outline: 1.5px solid var(--color-primary); }
+.calDayNum { font-size: 0.78rem; font-family: var(--font-mono); color: var(--color-text); width: 1.4rem; height: 1.4rem; display: flex; align-items: center; justify-content: center; }
+/* old dot styles kept for safety */
+.calDots { display: flex; gap: 2px; flex-wrap: wrap; padding: 0 0.1rem; }
+.calDot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.calDotMore { font-size: 0.55rem; color: var(--color-text-muted); font-family: var(--font-mono); line-height: 6px; }
+
+/* ── Cell chips (inline in grid) ─────────────────────────────── */
+.cellChips {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 1px;
+  overflow: hidden;
+}
+
+.cellChip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 14px;
+  border-left: 2px solid;
+  padding-left: 3px;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.cellChipDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cellChipTitle {
+  font-size: 0.6rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 14px;
+  max-width: 100%;
+  -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+  mask-image: linear-gradient(to right, black 60%, transparent 100%);
+}
+
+.cellChipMore {
+  font-size: 0.55rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  padding-left: 3px;
+}
+
+/* ── Detail panel cards ──────────────────────────────────────── */
+.calCards {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  height: 38px;
+  padding: 0 0.65rem 0 0.55rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.calCard:hover { box-shadow: var(--shadow-sm); }
+.calCardDone { opacity: 0.5; }
+
+.calCardIcon {
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.calCardTitle {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+/* smooth right-edge fade instead of hard ellipsis */
+.calCardFade {
+  position: absolute;
+  right: 24px;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+}
+
+.calCardStatus {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.calDetail { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
+.calDetailHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.calDetailDate { font-weight: 600; font-size: 0.9rem; }
+.calAddBtn {
+  background: none; border: 1.5px solid var(--color-border); border-radius: var(--radius-md);
+  color: var(--color-text-muted); font-size: 0.78rem; padding: 0.2rem 0.6rem;
+  cursor: pointer; font-family: var(--font-mono); transition: border-color 0.12s, color 0.12s;
+}
+.calAddBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.calEmpty { font-size: 0.85rem; color: var(--color-text-muted); text-align: center; padding: 1.5rem 0; }
+
+/* ── Filters block ────────────────────────────────────────────── */
+.filtersBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterLabel {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  white-space: nowrap;
+  align-self: center;
+  text-transform: uppercase;
+}
+
+.tagChip { font-family: var(--font-mono); }
+
+.filterClear {
+  padding: 0.35rem 0.7rem;
+  border: 1.5px solid transparent;
+  border-radius: 100px;
+  background: none;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.12s;
+}
+.filterClear:hover { color: var(--color-danger); }
+
+/* ── Cluster view ─────────────────────────────────────────────── */
+.clusterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .clusterGrid { grid-template-columns: 1fr; }
+}
+
+.clusterCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 14px);
+  padding: 1.1rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: box-shadow 0.15s;
+}
+.clusterCard:hover { box-shadow: var(--shadow-md); }
+
+.clusterHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.clusterIcon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.clusterName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clusterCount {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.clusterItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.clusterItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+  width: 100%;
+}
+.clusterItem:hover { background: rgba(255,255,255,0.04); }
+
+.clusterDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.clusterItemTitle {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Cluster input in modals ──────────────────────────────────── */
+.clusterInputWrap {
+  position: relative;
+}
+
+.clusterInput {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: var(--font-base);
+  transition: border-color 0.12s;
+}
+.clusterInput:focus { border-color: var(--color-primary); }
+.clusterInput::placeholder { color: var(--color-text-muted); opacity: 0.5; }

@@ -1,14 +1,14 @@
 import { create } from 'zustand'
 import { db, now } from '@shared/db'
 import { api } from '@shared/api/server'
-import type { Note, NoteColor } from '@shared/types'
+import type { Note, NoteColor, NoteLocation } from '@shared/types'
 
 interface NoteStore {
   notes: Note[]
   isLoading: boolean
   load: () => Promise<void>
-  add: (title: string, body: string, color: NoteColor, tags: string[]) => Promise<void>
-  update: (id: number, patch: Partial<Pick<Note, 'title' | 'body' | 'color' | 'tags' | 'isPinned'>>) => Promise<void>
+  add: (title: string, body: string, color: NoteColor, tags: string[], location?: NoteLocation | null, cluster?: string | null) => Promise<void>
+  update: (id: number, patch: Partial<Pick<Note, 'title' | 'body' | 'color' | 'tags' | 'isPinned' | 'linkedNoteUuids' | 'linkedTaskUuids' | 'location' | 'cluster'>>) => Promise<void>
   remove: (id: number) => Promise<void>
   togglePin: (id: number) => Promise<void>
 }
@@ -23,10 +23,10 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
     set({ notes, isLoading: false })
   },
 
-  add: async (title, body, color, tags) => {
+  add: async (title, body, color, tags, location?, cluster?) => {
     const ts = now()
     const uuid = crypto.randomUUID()
-    const id = await db.notes.add({ uuid, title, body, color, tags, isPinned: false, createdAt: ts, updatedAt: ts })
+    const id = await db.notes.add({ uuid, title, body, color, tags, isPinned: false, linkedNoteUuids: [], linkedTaskUuids: [], location: location ?? null, cluster: cluster ?? null, createdAt: ts, updatedAt: ts })
     const note = await db.notes.get(id)
     if (note) {
       set(s => ({ notes: [note, ...s.notes] }))

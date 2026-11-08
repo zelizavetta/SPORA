@@ -1,0 +1,339 @@
+.root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 4rem 1rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  gap: 1rem;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color 0.12s;
+}
+.backBtn:hover { color: var(--color-primary); }
+
+.topActions { display: flex; align-items: center; gap: 0.75rem; }
+
+.statusChip {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.statusChip:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.status_in_progress { border-color: var(--color-warning); color: var(--color-warning); }
+.status_done { border-color: var(--color-success); color: var(--color-success); }
+
+.deleteBtn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.45;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: opacity 0.12s;
+}
+.deleteBtn:hover { opacity: 1; }
+
+/* ── Layout ──────────────────────────────────────────────── */
+.layout {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  min-height: 0;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 1px solid var(--color-border);
+}
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+/* ── Meta row ─────────────────────────────────────────────── */
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.metaDate { opacity: 0.7; }
+
+.metaDue {
+  padding: 0.1rem 0.5rem;
+  border-radius: 100px;
+  background: rgba(250,204,21,0.12);
+  color: var(--color-warning);
+}
+.metaDueOverdue {
+  background: rgba(248,113,113,0.12);
+  color: var(--color-danger);
+}
+
+.metaTag {
+  padding: 0.1rem 0.45rem;
+  border-radius: 100px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* ── Title ────────────────────────────────────────────────── */
+.titleInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  resize: none;
+  overflow: hidden;
+  line-height: 1.2;
+  font-family: var(--font-base);
+  padding: 0;
+}
+.titleInput::placeholder { color: var(--color-text-muted); opacity: 0.4; }
+
+/* ── Description ──────────────────────────────────────────── */
+.descInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  outline: none;
+  font-size: 1rem;
+  color: var(--color-text);
+  resize: vertical;
+  line-height: 1.7;
+  font-family: var(--font-base);
+  padding: 1rem 0 0;
+  min-height: 120px;
+}
+.descInput::placeholder { color: var(--color-text-muted); opacity: 0.4; }
+
+/* ── Sections ─────────────────────────────────────────────── */
+.section { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.sectionLabel {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+.priorityRow { display: flex; gap: 0.5rem; }
+
+.priorityBtn {
+  flex: 1;
+  padding: 0.4rem 0;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+  font-family: var(--font-base);
+}
+.priorityActive { font-weight: 600; }
+
+.dateInput {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: var(--font-mono);
+  width: fit-content;
+}
+.dateInput:focus { border-color: var(--color-primary); }
+
+.tagsInput {
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: var(--font-mono);
+  width: 100%;
+  transition: border-color 0.12s;
+}
+.tagsInput:focus { border-color: var(--color-primary); }
+
+/* ── Deps ─────────────────────────────────────────────────── */
+.depList { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.depChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s;
+  width: 100%;
+}
+.depChip:hover { border-color: var(--color-primary); }
+
+.depDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.depTitle { flex: 1; font-size: 0.88rem; color: var(--color-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.depStatus { font-size: 0.7rem; color: var(--color-text-muted); font-family: var(--font-mono); flex-shrink: 0; }
+
+/* ── Sidebar cards ────────────────────────────────────────── */
+.sideCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.sideCardMuted { opacity: 0.8; }
+
+.sideCardLabel {
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  margin: 0;
+}
+
+.sideInfo {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.statusRow { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.statusBtn {
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s;
+  font-family: var(--font-base);
+}
+.statusBtnActive {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(79,242,166,0.07);
+  font-weight: 600;
+}
+
+/* ── Linked notes ─────────────────────────────────────────── */
+.linkedNotes { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.linkedNote {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.55rem 0.7rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s;
+  width: 100%;
+}
+.linkedNote:hover { border-color: var(--color-primary); }
+
+.linkedNoteDot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: none; /* colour shown via border-left */
+}
+
+.linkedNoteTitle {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkedNoteBody {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .layout { flex-direction: column; }
+  .main { border-right: none; border-bottom: 1px solid var(--color-border); padding: 1.25rem; }
+  .sidebar { width: 100%; padding: 1.25rem; }
+  .titleInput { font-size: 1.5rem; }
+}

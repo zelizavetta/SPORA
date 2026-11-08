@@ -1,29 +1,30 @@
-const BASE = import.meta.env.VITE_SERVER_URL ?? ''
+import { request, isRetryable } from './request'
+import { enqueue } from './outbox'
 
-function getToken(): string | null {
-  return localStorage.getItem('spora_token')
-}
+export { setToken, clearToken } from './request'
+export { ApiError } from './request'
 
-export function setToken(token: string) {
-  localStorage.setItem('spora_token', token)
-}
-
-export function clearToken() {
-  localStorage.removeItem('spora_token')
-}
-
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const token = getToken()
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+/**
+ * Отправляем сразу; если не вышло по причине, которая может пройти позже
+ * (нет сети, сервер лежит, токен протух) — изменение уходит в очередь и
+ * досылается при следующем удачном соединении.
+ */
+async function withOutbox<T>(
+  op: 'upsert' | 'update' | 'remove',
+  entity: string,
+  uuid: string,
+  payload: Record<string, unknown> | null,
+  send: () => Promise<T>,
+): Promise<T | null> {
+  try {
+    return await send()
+  } catch (e) {
+    if (isRetryable(e)) {
+      await enqueue(op, entity, uuid, payload)
+      return null
+    }
+    throw e
   }
-  const res = await fetch(`${BASE}${path}`, { ...init, headers })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }))
-    throw new Error(err.error ?? res.statusText)
-  }
-  return res.json() as Promise<T>
 }
 
 export const api = {
@@ -35,12 +36,15 @@ export const api = {
 
   sync: () => request<Record<string, unknown[]>>('/api/sync'),
 
-  upsert: <T>(entity: string, data: T) =>
-    request<T>(`/api/${entity}`, { method: 'POST', body: JSON.stringify(data) }),
+  upsert: <T extends { uuid: string }>(entity: string, data: T) =>
+    withOutbox('upsert', entity, data.uuid, data as unknown as Record<string, unknown>, () =>
+      request<T>(`/api/${entity}`, { method: 'POST', body: JSON.stringify(data) })),
 
   update: <T>(entity: string, uuid: string, data: Partial<T>) =>
-    request<T>(`/api/${entity}/${uuid}`, { method: 'PUT', body: JSON.stringify(data) }),
+    withOutbox('update', entity, uuid, data as Record<string, unknown>, () =>
+      request<T>(`/api/${entity}/${uuid}`, { method: 'PUT', body: JSON.stringify(data) })),
 
   remove: (entity: string, uuid: string) =>
-    request<{ ok: boolean }>(`/api/${entity}/${uuid}`, { method: 'DELETE' }),
+    withOutbox('remove', entity, uuid, null, () =>
+      request<{ ok: boolean }>(`/api/${entity}/${uuid}`, { method: 'DELETE' })),
 }

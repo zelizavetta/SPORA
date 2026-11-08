@@ -1,7 +1,10 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+config({ path: join(dirname(fileURLToPath(import.meta.url)), '.env') })
 import express from 'express'
 import cors from 'cors'
-import { initDb } from './db.js'
+import { ensureDb } from './db.js'
 import authRouter from './routes/auth.js'
 import dataRouter from './routes/data.js'
 import pushRouter from './routes/push.js'
@@ -21,6 +24,10 @@ app.use('/api', requireAuth, pushRouter)
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
 
-await initDb()
-startScheduler()
+try {
+  await ensureDb()
+  startScheduler()
+} catch (e) {
+  console.warn('⚠ DB unavailable at startup:', e.message, '— server will retry on first request')
+}
 app.listen(PORT, () => console.log(`SPORA server listening on :${PORT}`))

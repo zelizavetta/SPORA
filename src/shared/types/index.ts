@@ -23,12 +23,22 @@ export interface MoodEntry extends BaseRecord {
 // Note
 export type NoteColor = 'lavender' | 'sage' | 'peach' | 'sky' | 'vanilla'
 
+export interface NoteLocation {
+  lat: number
+  lon: number
+  name?: string
+}
+
 export interface Note extends BaseRecord {
   title: string
   body: string
   color: NoteColor
   tags: string[]
   isPinned: boolean
+  linkedNoteUuids: string[]
+  linkedTaskUuids: string[]
+  location?: NoteLocation | null
+  cluster?: string | null
 }
 
 // Task / Planning
@@ -42,6 +52,8 @@ export interface Task extends BaseRecord {
   status: TaskStatus
   dueDate: string | null // YYYY-MM-DD
   tags: string[]
+  dependsOnUuids: string[]
+  linkedNoteUuids: string[]
 }
 
 // Workout
@@ -71,6 +83,54 @@ export interface GoalMilestone {
   id: string
   title: string
   isDone: boolean
+}
+
+// Recipes & fridge
+export type RecipeType =
+  | 'breakfast' | 'soup' | 'hot' | 'salad' | 'sweet' | 'drink' | 'snack' | 'other'
+
+export type ProductCategory =
+  | 'meat' | 'dairy' | 'vegetable' | 'fruit'
+  | 'grain' | 'spice' | 'drink' | 'sweet' | 'other'
+
+export interface RecipeIngredient {
+  id: string
+  name: string
+  amount: string // свободная форма: «200 г», «2 шт»
+}
+
+export interface Recipe extends BaseRecord {
+  title: string
+  description: string
+  type: RecipeType
+  ingredients: RecipeIngredient[]
+}
+
+export interface FridgeItem extends BaseRecord {
+  name: string
+  category: ProductCategory
+  quantity: number
+  unit: string // «шт», «г», «мл»
+}
+
+/** Изменение, не доехавшее до сервера — досылается при появлении связи. */
+export type OutboxOp = 'upsert' | 'update' | 'remove'
+
+export interface OutboxEntry {
+  id?: ID
+  op: OutboxOp
+  entity: string // 'notes', 'recipes', …
+  uuid: string
+  payload: Record<string, unknown> | null
+  createdAt: number
+  attempts: number
+  lastError?: string
+}
+
+/** Рецепт, запланированный на конкретный день недели. */
+export interface MealPlanEntry extends BaseRecord {
+  date: string // YYYY-MM-DD
+  recipeUuid: string
 }
 
 // Health

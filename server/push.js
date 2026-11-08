@@ -1,13 +1,19 @@
 import webpush from 'web-push'
 import { pool } from './db.js'
 
-webpush.setVapidDetails(
-  `mailto:${process.env.VAPID_EMAIL ?? 'admin@spora.app'}`,
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY,
-)
+let _ready = false
+function initWebPush() {
+  if (_ready) return
+  webpush.setVapidDetails(
+    `mailto:${process.env.VAPID_EMAIL ?? 'admin@spora.app'}`,
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY,
+  )
+  _ready = true
+}
 
 async function sendToRows(rows, payload) {
+  initWebPush()
   for (const row of rows) {
     try {
       await webpush.sendNotification(row.subscription, JSON.stringify(payload))

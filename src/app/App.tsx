@@ -6,8 +6,12 @@ import { useTaskStore } from '@entities/task'
 import { useWorkoutStore } from '@entities/workout'
 import { useGoalStore } from '@entities/goal'
 import { useHealthStore } from '@entities/health'
+import { useRecipeStore } from '@entities/recipe'
+import { useFridgeStore } from '@entities/fridge'
+import { useMealPlanStore } from '@entities/meal-plan'
 import { useAuthStore } from '@entities/auth'
-import { pullServerSync } from '@shared/api/sync'
+import { pullServerSync, backfillOutbox } from '@shared/api/sync'
+import { flushOutbox, startOutboxWatcher } from '@shared/api/outbox'
 import { scheduleNotifications, getNotificationPermission } from '@shared/lib/notifications'
 
 async function loadAll() {
@@ -18,6 +22,9 @@ async function loadAll() {
     useWorkoutStore.getState().load(),
     useGoalStore.getState().load(),
     useHealthStore.getState().load(),
+    useRecipeStore.getState().load(),
+    useFridgeStore.getState().load(),
+    useMealPlanStore.getState().load(),
   ])
 }
 
@@ -31,8 +38,14 @@ export function App() {
       }
     }
     if (isAuth) {
-      pullServerSync()
+      startOutboxWatcher()
+      // сначала отдаём накопленное локально, потом забираем серверное —
+      // иначе свежие офлайн-правки затрутся старыми данными с сервера
+      void backfillOutbox()
         .catch(() => {})
+        .then(() => flushOutbox())
+        .catch(() => {})
+        .then(() => pullServerSync().catch(() => {}))
         .finally(() => { void loadAll().then(after) })
     } else {
       void loadAll().then(after)

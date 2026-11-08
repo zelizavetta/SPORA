@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { api, setToken, clearToken } from '@shared/api/server'
+import { flushOutbox } from '@shared/api/outbox'
 
 interface AuthState {
   isAuthenticated: boolean
@@ -25,6 +26,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { token } = await api.login(password)
       setToken(token)
       set({ isAuthenticated: true, isLoading: false })
+      // токен появился — можно дослать всё, что копилось без него
+      void flushOutbox()
     } catch (e) {
       set({ error: (e as Error).message, isLoading: false })
     }
